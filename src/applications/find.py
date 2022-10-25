@@ -42,7 +42,7 @@ class Find(Application):
             if os.path.isdir(file):
                 files = files + self.find(dir + '/' + file.name, pattern)
             else:
-                if re.search(pattern, file.name):
+                if re.match(pattern, file.name):
                     files.append(dir + '/'+ file.name)
         return files
 
