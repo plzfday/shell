@@ -36,6 +36,10 @@ class Application(metaclass=abc.ABCMeta):
             from applications.grep import Grep
 
             return Grep()
+        elif name == "find":
+            from applications.find import Find
+
+            return Find()
         else:
             raise ValueError(f"unsupported application {name}")
 
