@@ -36,6 +36,10 @@ class Application(metaclass=abc.ABCMeta):
             from applications.grep import Grep
 
             return Grep()
+        elif name == "uniq":
+            from applications.uniq import Uniq
+
+            return Uniq()
         else:
             raise ValueError(f"unsupported application {name}")
 
