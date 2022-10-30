@@ -19,8 +19,10 @@ class Find(Application):
                 for file in self.find(find_dir, pattern):
                     out.append(file + "\n")
 
-        # find -name PATTERN
+        # find -name PATTERN or find . -name(with out pattern)
         elif len(args) == 2:
+            if args[1] == "-name":
+                raise ValueError("requires pattern")
             if args[0] != "-name":
                     raise ValueError("wrong flags")
             else:
@@ -28,8 +30,10 @@ class Find(Application):
                 for file in self.find('.', pattern):
                     out.append(file + "\n")
 
-        # find [PATH]
+        # find [PATH] or find -name(with out pattern)
         elif len(args) == 1:
+            if args[0] == "-name":
+                raise ValueError("requires pattern")
             find_dir = args[0]
             for file in self.find(find_dir):
                 out.append(file + "\n")
