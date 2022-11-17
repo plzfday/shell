@@ -36,6 +36,10 @@ class Application(metaclass=abc.ABCMeta):
             from applications.grep import Grep
 
             return Grep()
+        elif name == "uniq":
+            from applications.uniq import Uniq
+
+            return Uniq()
         elif name == "find":
             from applications.find import Find
 
