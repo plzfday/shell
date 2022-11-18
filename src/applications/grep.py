@@ -1,26 +1,20 @@
 from applications.application import Application
 import re, sys
-from utils import stdinput
 
 
 class Grep(Application):
     def exec(self, args, out):
         if len(args) == 1:
             pattern = args[0]
-            sin = sys.stdin
-            sout = sys.stdout
-            while True:
-                try:
-                    s = sin.readline()
-                    if pattern in s:
-                        sout.write(s)
-                    else:
-                        sout.write(s)
-                except KeyboardInterrupt:
-                    break
+            try:
+                while line:=sys.stdin.readline():
+                    if re.match(pattern, line):
+                        sys.stdout.write(line)
+            except KeyboardInterrupt or EOFError:
+                pass
         elif len(args) < 2:
             raise ValueError("wrong number of command line arguments")
-        elif len(args) == 2:
+        elif len(args) >= 2:
             pattern = args[0]
             files = args[1:]
             for file in files:

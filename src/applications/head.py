@@ -1,11 +1,16 @@
 from applications.application import Application
 from utils import stdinput
+import sys
 
 
 class Head(Application):
     def exec(self, args, out):
         if len(args) == 2:
-            stdinput()
+            try:
+                while line:=sys.stdin.readline():
+                    sys.stdout.write(line)
+            except KeyboardInterrupt or EOFError:
+                pass
         else:
             if len(args) != 1 and len(args) != 3:
                 raise ValueError("wrong number of command line arguments")

@@ -1,5 +1,5 @@
 from applications.application import Application
-from utils import stdinput
+import sys
 
 
 class Cat(Application):
@@ -9,4 +9,9 @@ class Cat(Application):
                 with open(a) as f:
                     out.append(f.read())
         else:
-            stdinput()
+            try:
+                while line:=sys.stdin.readline():
+                    sys.stdout.write(line)
+            except KeyboardInterrupt or EOFError:
+                pass
+
