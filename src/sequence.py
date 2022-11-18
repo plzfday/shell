@@ -1,7 +1,7 @@
-import command
+from command import Command
 
 
-class Sequence(command.Command):
+class Sequence(Command):
     def __init__(self):
         pass
 

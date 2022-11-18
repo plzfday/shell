@@ -116,14 +116,16 @@ class Tail(Application):
                 file = args[2]
 
         if args_num == 2:
-            for i in range(min(len(in_stream), num_lines)):
+            display_length = min(len(in_stream), num_lines)
+            for i in range(len(in_stream) - display_length):
+                in_stream.popleft()
+            for i in range(display_length):
                 out_stream.append(in_stream.popright())
-                out_stream.clear()
         else:
             with open(file) as f:
                 lines = f.readlines()
                 display_length = min(len(lines), num_lines)
-                for i in range(0, display_length):
+                for i in range(display_length):
                     out_stream.append(lines[len(lines) - display_length + i])
 
 
