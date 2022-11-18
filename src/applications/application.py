@@ -12,6 +12,10 @@ class Application(metaclass=abc.ABCMeta):
             from applications.cd import Cd
 
             return Cd()
+        elif name == "cut":
+            from applications.cut import Cut
+
+            return Cut()
         elif name == "echo":
             from applications.echo import Echo
 
