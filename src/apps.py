@@ -262,15 +262,16 @@ class Find(Application):
                 out_stream.append(file + "\n")
 
     def find(self, dir, pattern=""):
-        if dir == "":
+        if dir == "" or dir == "./sys" or dir == "./proc":
             return []
         files = []
-        for file in os.scandir(dir):
-            if os.path.isdir(file):
-                files = files + self.find(dir + "/" + file.name, pattern)
+        for file in os.listdir(dir):
+            newFile = os.path.join(dir, file)
+            if os.path.isdir(newFile):
+                files = files + self.find(newFile, pattern)
             else:
-                if re.match(pattern, file.name):
-                    files.append(dir + "/" + file.name)
+                if re.match(pattern, file):
+                    files.append(newFile)
         return files
 
     def getRegex(self, pattern):
