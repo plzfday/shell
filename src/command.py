@@ -1,16 +1,16 @@
-import re
+import re, abc, apps
+
 from glob import glob
-from applications.application import Application
 
 
-class Command:
+class Command(metaclass=abc.ABCMeta):
     def __init__(self, cmdline):
         self.raw_commands = []
         for m in re.finditer("([^\"';]+|\"[^\"]*\"|'[^']*')", cmdline):
             if m.group(0):
                 self.raw_commands.append(m.group(0))
 
-    def eval(self, out):
+    def eval(self, in_stream, out_stream):
         for command in self.raw_commands:
             tokens = []
             for m in re.finditer("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'", command):
@@ -26,5 +26,5 @@ class Command:
             app = tokens[0]
             args = tokens[1:]
 
-            application = Application.by_name(app)
-            application.exec(args, out)
+            application = apps.Application.by_name(app)
+            application.exec(args=args, in_stream=in_stream, out_stream=out_stream)
