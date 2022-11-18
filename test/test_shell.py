@@ -33,6 +33,31 @@ class TestSort(unittest.TestCase):
         self.app.exec([], self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_out))
 
+class TestFind(unittest.TestCase):
+    def setUp(self):
+        from src.apps import Find
+        self.app = Find()
+        self.in_stream = deque()
+        self.out_stream = deque()
+
+        with open("test/test_find.txt", "w") as f:
+            f.write("")
+
+    def test_find_dir(self):
+        self.app.exec(["test"], self.in_stream, self.out_stream)
+        self.assertEqual(len(self.out_stream), 3)
+
+    def test_find_name_test_file_dot_txt(self):
+        self.app.exec(["-name", "test_find.txt"], self.in_stream, self.out_stream)
+        self.assertEqual(self.out_stream, deque(["./test/test_find.txt\n"]))
+
+    def test_find_name_pattern(self):
+        self.app.exec(["-name", "*.txt"], self.in_stream, self.out_stream)
+        self.assertEqual(len(self.out_stream), 7)
+
+    def test_find_dir_name_pattern(self):
+        self.app.exec(["test", "-name", "*.txt"], self.in_stream, self.out_stream)
+        self.assertEqual(self.out_stream, deque(["test/test_find.txt\n"]))
 
 if __name__ == "__main__":
     unittest.main()
