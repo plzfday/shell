@@ -120,7 +120,7 @@ class Tail(Application):
             for i in range(len(in_stream) - display_length):
                 in_stream.popleft()
             for i in range(display_length):
-                out_stream.append(in_stream.popright())
+                out_stream.append(in_stream.popleft())
         else:
             with open(file) as f:
                 lines = f.readlines()
