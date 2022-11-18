@@ -55,7 +55,7 @@ class TestFind(unittest.TestCase):
             self.app.exec([""], self.in_stream, self.out_stream)
             self.assertEqual(self.out_stream, deque([]))
 
-    def test_find_name_test_file_dot_txt(self):
+    def test_find_name_test_find_dot_txt(self):
         self.app.exec(["-name", "test_find.txt"], self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(["./test/test_find.txt\n"]))
 
