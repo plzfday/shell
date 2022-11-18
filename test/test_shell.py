@@ -47,13 +47,29 @@ class TestFind(unittest.TestCase):
         self.app.exec(["test"], self.in_stream, self.out_stream)
         self.assertEqual(len(self.out_stream), 3)
 
+    def test_find_dir_root(self):
+            self.app.exec(["..", "-name", "test_find.txt"], self.in_stream, self.out_stream)
+            self.assertEqual(self.out_stream, deque(["../comp0010/test/test_find.txt\n"]))
+
+    def test_find_no_dir(self):
+            self.app.exec([""], self.in_stream, self.out_stream)
+            self.assertEqual(self.out_stream, deque([]))
+
     def test_find_name_test_file_dot_txt(self):
         self.app.exec(["-name", "test_find.txt"], self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(["./test/test_find.txt\n"]))
 
-    def test_find_name_pattern(self):
+    def test_find_name_pattern_front(self):
         self.app.exec(["-name", "*.txt"], self.in_stream, self.out_stream)
         self.assertEqual(len(self.out_stream), 7)
+
+    def test_find_name_pattern_back(self):
+        self.app.exec(["-name", "test_find*"], self.in_stream, self.out_stream)
+        self.assertEqual(self.out_stream, deque(["./test/test_find.txt\n"]))
+
+    def test_find_name_pattern_front_back(self):
+        self.app.exec(["-name", "*find*"], self.in_stream, self.out_stream)
+        self.assertEqual(self.out_stream, deque(["./test/test_find.txt\n"]))
 
     def test_find_dir_name_pattern(self):
         self.app.exec(["test", "-name", "*.txt"], self.in_stream, self.out_stream)

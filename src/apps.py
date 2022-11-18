@@ -262,12 +262,14 @@ class Find(Application):
                 out_stream.append(file + "\n")
 
     def find(self, dir, pattern=""):
-        if dir == "" or dir == "./sys" or dir == "./proc":
+        if dir == "":
             return []
         files = []
         for file in os.listdir(dir):
             newFile = os.path.join(dir, file)
             if os.path.isdir(newFile):
+                if os.path.abspath(newFile) == "/sys" or os.path.abspath(newFile) == "/proc":
+                    continue
                 files = files + self.find(newFile, pattern)
             else:
                 if re.match(pattern, file):
@@ -275,13 +277,13 @@ class Find(Application):
         return files
 
     def getRegex(self, pattern):
-        regex = pattern.replace(".", "[.]")
-        regex = regex.replace("*", ".*")
+        regex = pattern
         if regex[0] == "*":
             regex = regex + "$"
-
-        if regex[:-1] != "*":
+        if regex[-1:] != "*":
             regex = regex + "$"
+        regex = regex.replace(".", "[.]")
+        regex = regex.replace("*", ".*")
         return regex
 
 
