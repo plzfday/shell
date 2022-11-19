@@ -238,8 +238,8 @@ class Find(Application):
                 raise ValueError("wrong flags")
             else:
                 find_dir = args[0]
-                pattern = self.getRegex(args[2])
-                for file in self.find(find_dir, pattern):
+                pattern = self.__get_regex(args[2])
+                for file in self.__find(find_dir, pattern):
                     out_stream.append(file + "\n")
 
         # find -name PATTERN or find . -name(with out pattern)
@@ -249,8 +249,8 @@ class Find(Application):
             if args[0] != "-name":
                 raise ValueError("wrong flags")
             else:
-                pattern = self.getRegex(args[1])
-                for file in self.find(".", pattern):
+                pattern = self.__get_regex(args[1])
+                for file in self.__find(".", pattern):
                     out_stream.append(file + "\n")
 
         # find [PATH] or find -name(with out pattern)
@@ -258,25 +258,22 @@ class Find(Application):
             if args[0] == "-name":
                 raise ValueError("requires pattern")
             find_dir = args[0]
-            for file in self.find(find_dir):
+            for file in self.__find(find_dir):
                 out_stream.append(file + "\n")
 
-    def find(self, dir, pattern=""):
+    def __find(self, dir, pattern=""):
         if dir == "":
             return []
         files = []
         for file in os.listdir(dir):
-            newFile = os.path.join(dir, file)
-            if os.path.isdir(newFile):
-                if os.path.abspath(newFile) == "/sys" or os.path.abspath(newFile) == "/proc":
-                    continue
-                files = files + self.find(newFile, pattern)
-            else:
-                if re.match(pattern, file):
-                    files.append(newFile)
+            new_file = os.path.join(dir, file)
+            if re.match(pattern, file):
+                files.append(new_file)
+            if os.path.isdir(new_file) and not os.path.islink(new_file):
+                files = files + self.__find(new_file, pattern)
         return files
 
-    def getRegex(self, pattern):
+    def __get_regex(self, pattern):
         regex = pattern
         if regex[0] == "*":
             regex = regex + "$"
