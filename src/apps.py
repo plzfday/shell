@@ -13,7 +13,7 @@ class Application(metaclass=abc.ABCMeta):
             "head": Head,
             "tail": Tail,
             "grep": Grep,
-            # "cut": Cut,
+            "cut": Cut,
             "find": Find,
             "uniq": Uniq,
             "sort": Sort,
@@ -160,6 +160,72 @@ class Grep(Application):
                                 out_stream.append(line)
 
 
+class Cut(Application):
+    def exec(self, args, in_stream, out_stream):
+        # cut -b 1 requirements.txt
+        # args: ['-b', '1-,3-5', 'requirements.txt']
+        if len(args) < 2 or len(args) > 3:
+            raise ValueError("Invalid number of arguments")
+
+        if args[0] == "-b":
+            intervals = self.__merge_intervals(args[1])
+            if len(args) == 2:
+                for line in in_stream:
+                    self.__print_line(line, intervals, out_stream)
+            else:
+                with open(args[2], "r") as f:
+                    for line in f:
+                        self.__print_line(line, intervals, out_stream)
+        else:
+            raise ValueError("Invalid option")
+
+    def __merge_intervals(self, arg):
+        return self.__clean_up_intervals(self.__parse_intervals(arg))
+
+    def __parse_intervals(self, arg):
+        intervals = []
+        items = arg.split(",")
+        for item in items:
+            tmp = item.split("-")
+            if len(tmp) == 1:
+                intervals.append([int(tmp[0]), int(tmp[0])])
+            elif len(tmp) == 2:
+                if tmp == ("", ""):
+                    raise ValueError("Invalid range")
+                elif tmp[0] == "":
+                    # Case: -num2
+                    intervals.append((1, int(tmp[1])))
+                elif tmp[1] == "":
+                    # Case: num1-
+                    # Assume that the max range is up to 1 << 32 - 1
+                    intervals.append((int(tmp[0]), 1 << 32 - 1))
+                else:
+                    # Case: num1-num2
+                    n0, n1 = int(tmp[0]), int(tmp[1])
+                    if n0 <= n1:
+                        intervals.append((n0, n1))
+            else:
+                raise ValueError("Invalid input")
+
+        return intervals
+
+    def __clean_up_intervals(self, intervals):
+        intervals.sort()
+
+        merged = []
+        for interval in intervals:
+            if not merged or merged[-1][1] < interval[0]:
+                merged.append(interval)
+            else:
+                merged[-1] = (merged[-1][0], max(merged[-1][1], interval[1]))
+
+        return merged
+
+    def __print_line(self, line, intervals, out_stream):
+        for interval in intervals:
+            out_stream.append(line[interval[0] - 1 : interval[1]] + "\n")
+
+
 class Find(Application):
     def exec(self, args, in_stream, out_stream):
         # No argument or more than three arguments
@@ -220,67 +286,57 @@ class Find(Application):
 
 class Uniq(Application):
     def exec(self, args, in_stream, out_stream):
-        caseSensitive = True
         if len(args) > 2:
             raise ValueError("wrong number of command line arguments")
-        elif len(args) == 0 or len(args) == 1:
-            if len(args) == 0:
-                self.findUniq(caseSensitive)
-            else:
-                if args[0] == "-i":
-                    caseSensitive = False
-                    self.findUniq(caseSensitive)
-                else:
-                    file = args[0]
-                    self.openFile(file, caseSensitive, out_stream)
+
+        case_sensitive = True
+        if "-i" in args and len(args) > 0:
+            case_sensitive = False
+            args.remove("-i")
+
+        contents = []
+        if len(args) == 0:
+            contents = list(in_stream)
         else:
-            if args[0] != "-i":
-                raise ValueError("wrong flags")
-            else:
-                caseSensitive = False
-                file = args[1]
-                self.openFile(file, caseSensitive, out_stream)
+            with open(args[-1], "r") as f:
+                for line in f:
+                    contents.append(line)
 
-    def findUniq(self, caseSensitive):
-        sin = sys.stdin
-        sout = sys.stdout
-        ls = []
-        ls.append(sin.readline())
-        while True:
-            try:
-                if caseSensitive == True:
-                    s = sin.readline()
-                    if ls[-1] != s:
-                        sout.write(ls[-1])
-                        ls[-1] = s
-                else:
-                    s = sin.readline()
-                    if ls[-1].lower() != s.lower():
-                        sout.write(ls[-1])
-                        ls[-1] = s
-            except KeyboardInterrupt:
-                break
+        uniq_contents = self.__process_uniq(contents, case_sensitive)
 
-    def openFile(self, file, caseSensitive, out):
-        with open(file) as f:
-            lines = f.readlines()
-            standardLine = lines[0]
-            if caseSensitive == True:
-                out.append(standardLine)
-                for i in range(1, len(lines)):
-                    if lines[i] != lines[i - 1]:
-                        out.append(lines[i])
-            else:
-                out.append(standardLine)
-                for i in range(1, len(lines)):
-                    if lines[i].lower() != lines[i - 1].lower():
-                        out.append(lines[i])
+        for line in uniq_contents:
+            out_stream.append(line)
+
+    def __process_uniq(self, contents, case_sensitive):
+        if len(contents) < 2:
+            return contents
+
+        result = []
+        cmp = 0
+        idx = 1
+
+        while idx < len(contents):
+            line1 = contents[cmp]
+            line2 = contents[idx]
+
+            if case_sensitive:
+                line1 = line1.lower()
+                line2 = line2.lower()
+
+            if line1 != line2:
+                result.append(contents[cmp])
+                cmp = idx
+
+            idx += 1
+
+        result.append(contents[cmp])
+
+        return result
 
 
 class Sort(Application):
     def exec(self, args, in_stream, out_stream):
-        args_num = len(args)
-        if args_num > 2:
+        if len(args) > 2:
             raise ValueError("sort: wrong number of arguments")
 
         contents = []
@@ -288,22 +344,16 @@ class Sort(Application):
 
         if "-r" in args:
             is_reverse = True
+            args.remove("-r")
 
-        if args_num == 0 or (args_num == 1 and is_reverse):
+        if len(args) == 0:
             contents = list(in_stream)
         else:
-            contents = self.__read_file(args[-1])
+            with open(args[-1], "r") as f:
+                for line in f:
+                    contents.append(line)
 
         contents.sort(reverse=is_reverse)
 
         for line in contents:
             out_stream.append(line)
-
-    def __read_file(self, path):
-        contents = []
-
-        with open(path, "r") as f:
-            for line in f:
-                contents.append(line.rstrip())
-
-        return contents
