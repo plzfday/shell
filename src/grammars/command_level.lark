@@ -1,0 +1,13 @@
+command: pipe | seq | call
+pipe: call "|" call | pipe "|" call
+seq: command ";" command
+call: (non_keyword | quoted)*
+
+quoted: single_quoted | double_quoted | back_quoted
+single_quoted: "'" NON_NEWLINE_NON_SINGLE_QUOTE "'"
+back_quoted: "`" NON_NEWLINE_NON_BACKQUOTE  "`"
+double_quoted: "\"" (back_quoted | DOUBLE_QUOTE_CONTENT)* "\""
+
+NON_NEWLINE_NON_SINGLE_QUOTE: /[^\n']+/
+NON_NEWLINE_NON_BACKQUOTE: /[^\n`]+/
+DOUBLE_QUOTE_CONTENT: /[^\n"`]+/

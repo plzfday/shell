@@ -1,0 +1,17 @@
+call: WS? (redirection WS)* argument (WS atom)* WS?
+atom: redirection | argument
+argument: (quoted | UNQUOTED)+
+redirection: ("<"|">") WS? argument
+
+quoted: single_quoted | double_quoted | back_quoted
+single_quoted: "'" NON_NEWLINE_NON_SINGLE_QUOTE "'"
+back_quoted: "`" NON_NEWLINE_NON_BACKQUOTE  "`"
+double_quoted: "\"" (back_quoted | DOUBLE_QUOTE_CONTENT)* "\""
+
+NON_NEWLINE_NON_SINGLE_QUOTE: /[^\n']+/
+NON_NEWLINE_NON_BACKQUOTE: /[^\n`]+/
+DOUBLE_QUOTE_CONTENT: /[^\n"`]+/
+
+UNQUOTED: /[^ \t'"\n;|<>]+/
+
+%import common.WS_INLINE -> WS
