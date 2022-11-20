@@ -137,8 +137,6 @@ class Grep(Application):
                 s = in_stream.popleft()
                 if pattern in s:
                     out_stream.append(s)
-        elif len(args) < 2:
-            raise ValueError("wrong number of command line arguments")
         elif len(args) == 2:
             pattern = args[0]
             files = args[1:]
@@ -151,6 +149,8 @@ class Grep(Application):
                                 out_stream.append(f"{file}:{line}")
                             else:
                                 out_stream.append(line)
+        else:
+            raise ValueError("wrong number of command line arguments")
 
 
 class Cut(Application):
