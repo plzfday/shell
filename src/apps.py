@@ -171,11 +171,11 @@ class Cut(Application):
             intervals = self.__merge_intervals(args[1])
             if len(args) == 2:
                 for line in in_stream:
-                    self.__print_line(line, intervals, out_stream)
+                    self.__print_line(line.rstrip(), intervals, out_stream)
             else:
                 with open(args[2], "r") as f:
                     for line in f:
-                        self.__print_line(line, intervals, out_stream)
+                        self.__print_line(line.rstrip(), intervals, out_stream)
         else:
             raise ValueError("Invalid option")
 
@@ -222,8 +222,10 @@ class Cut(Application):
         return merged
 
     def __print_line(self, line, intervals, out_stream):
+        tmp = []
         for interval in intervals:
-            out_stream.append(line[interval[0] - 1 : interval[1]] + "\n")
+            tmp.append(line[interval[0] - 1 : interval[1]])
+        out_stream.append("".join(tmp) + "\n")
 
 
 class Find(Application):
