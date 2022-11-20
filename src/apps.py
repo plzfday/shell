@@ -133,17 +133,10 @@ class Grep(Application):
     def exec(self, args, in_stream, out_stream):
         if len(args) == 1:
             pattern = args[0]
-            sin = sys.stdin
-            sout = sys.stdout
-            while True:
-                try:
-                    s = sin.readline()
-                    if pattern in s:
-                        sout.write(s)
-                    else:
-                        sout.write(s)
-                except KeyboardInterrupt:
-                    break
+            while len(in_stream) != 0:
+                s = in_stream.popleft()
+                if pattern in s:
+                    out_stream.append(s)
         elif len(args) < 2:
             raise ValueError("wrong number of command line arguments")
         elif len(args) == 2:
