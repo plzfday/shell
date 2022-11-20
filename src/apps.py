@@ -305,7 +305,7 @@ class Uniq(Application):
         uniq_contents = self.__process_uniq(contents, case_sensitive)
 
         for line in uniq_contents:
-            out_stream.append(line)
+            out_stream.append(line.rstrip())
 
     def __process_uniq(self, contents, case_sensitive):
         if len(contents) < 2:
@@ -319,7 +319,7 @@ class Uniq(Application):
             line1 = contents[cmp]
             line2 = contents[idx]
 
-            if case_sensitive:
+            if case_sensitive == False:
                 line1 = line1.lower()
                 line2 = line2.lower()
 
