@@ -228,12 +228,8 @@ class Cut(Application):
 
 class Find(Application):
     def exec(self, args, in_stream, out_stream):
-        # No argument or more than three arguments
-        if len(args) == 0 or len(args) > 3:
-            raise ValueError("wrong number of command line arguments")
-
         # find [PATH] -name PATTERN
-        elif len(args) == 3:
+        if len(args) == 3:
             if args[1] != "-name":
                 raise ValueError("wrong flags")
             else:
@@ -260,6 +256,11 @@ class Find(Application):
             find_dir = args[0]
             for file in self.__find(find_dir):
                 out_stream.append(file + "\n")
+
+        # No argument or more than three arguments
+        else:
+            raise ValueError("wrong number of command line arguments")
+
 
     def __find(self, dir, pattern=""):
         if dir == "":

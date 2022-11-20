@@ -42,10 +42,10 @@ class TestFind(unittest.TestCase):
 
         with open("test/test_find.txt", "w") as f:
             f.write("")
-
+    
     def test_find_dir(self):
         self.app.exec(["test"], self.in_stream, self.out_stream)
-        self.assertEqual(len(self.out_stream), 3)
+        self.assertEqual(len(self.out_stream), 4)
 
     def test_find_dir_root(self):
             self.app.exec(["..", "-name", "test_find.txt"], self.in_stream, self.out_stream)
