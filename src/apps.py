@@ -228,18 +228,14 @@ class Cut(Application):
 
 class Find(Application):
     def exec(self, args, in_stream, out_stream):
-        # No argument or more than three arguments
-        if len(args) == 0 or len(args) > 3:
-            raise ValueError("wrong number of command line arguments")
-
         # find [PATH] -name PATTERN
-        elif len(args) == 3:
+        if len(args) == 3:
             if args[1] != "-name":
                 raise ValueError("wrong flags")
             else:
                 find_dir = args[0]
-                pattern = self.getRegex(args[2])
-                for file in self.find(find_dir, pattern):
+                pattern = self.__get_regex(args[2])
+                for file in self.__find(find_dir, pattern):
                     out_stream.append(file + "\n")
 
         # find -name PATTERN or find . -name(with out pattern)
@@ -249,8 +245,8 @@ class Find(Application):
             if args[0] != "-name":
                 raise ValueError("wrong flags")
             else:
-                pattern = self.getRegex(args[1])
-                for file in self.find(".", pattern):
+                pattern = self.__get_regex(args[1])
+                for file in self.__find(".", pattern):
                     out_stream.append(file + "\n")
 
         # find [PATH] or find -name(with out pattern)
@@ -258,29 +254,34 @@ class Find(Application):
             if args[0] == "-name":
                 raise ValueError("requires pattern")
             find_dir = args[0]
-            for file in self.find(find_dir):
+            for file in self.__find(find_dir):
                 out_stream.append(file + "\n")
 
-    def find(self, dir, pattern=""):
+        # No argument or more than three arguments
+        else:
+            raise ValueError("wrong number of command line arguments")
+
+
+    def __find(self, dir, pattern=""):
         if dir == "":
             return []
         files = []
-        for file in os.scandir(dir):
-            if os.path.isdir(file):
-                files = files + self.find(dir + "/" + file.name, pattern)
-            else:
-                if re.match(pattern, file.name):
-                    files.append(dir + "/" + file.name)
+        for file in os.listdir(dir):
+            new_file = os.path.join(dir, file)
+            if re.match(pattern, file):
+                files.append(new_file)
+            if os.path.isdir(new_file) and not os.path.islink(new_file):
+                files = files + self.__find(new_file, pattern)
         return files
 
-    def getRegex(self, pattern):
-        regex = pattern.replace(".", "[.]")
-        regex = regex.replace("*", ".*")
+    def __get_regex(self, pattern):
+        regex = pattern
         if regex[0] == "*":
             regex = regex + "$"
-
-        if regex[:-1] != "*":
+        if regex[-1:] != "*":
             regex = regex + "$"
+        regex = regex.replace(".", "[.]")
+        regex = regex.replace("*", ".*")
         return regex
 
 
