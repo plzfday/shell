@@ -312,7 +312,7 @@ class Uniq(Application):
             line1 = contents[cmp]
             line2 = contents[idx]
 
-            if case_sensitive == False:
+            if not case_sensitive:
                 line1 = line1.lower()
                 line2 = line2.lower()
 
