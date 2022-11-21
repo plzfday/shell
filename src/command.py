@@ -1,4 +1,7 @@
-import re, abc, apps
+import re, abc, apps, unsafeDecorator
+
+from unsafeDecorator import UnsafeApplication
+from apps import Application
 
 from glob import glob
 
@@ -26,5 +29,10 @@ class Command(metaclass=abc.ABCMeta):
             app = tokens[0]
             args = tokens[1:]
 
-            application = apps.Application.by_name(app)
+      
+            #unsafeDecorator
+            application = UnsafeApplication(Application()).by_name(app)
+            # application = UnsafeApplication.by_name(app)
             application.exec(args=args, in_stream=in_stream, out_stream=out_stream)
+          
+            

@@ -18,7 +18,7 @@ class Application(metaclass=abc.ABCMeta):
             "uniq": Uniq,
             "sort": Sort,
         }
-
+        
         if name not in app:
             raise ValueError(f"Unknown application: {name}")
 
