@@ -263,7 +263,6 @@ class Find(Application):
         else:
             raise ValueError("wrong number of command line arguments")
 
-
     def __find(self, dir, pattern=""):
         if dir == "":
             return []

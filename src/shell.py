@@ -1,5 +1,4 @@
-import sys
-import os
+import sys, os
 
 from collections import deque
 from command import Command
