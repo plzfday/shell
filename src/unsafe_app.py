@@ -1,10 +1,6 @@
 from apps import Application
 
 
-class ValueError(Exception):
-    pass
-
-
 class UnsafeDecorator(Application):
     def __init__(self, app):
         self.__app = app
