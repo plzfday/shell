@@ -1,8 +1,6 @@
 import re, abc, apps
 
 from unsafe_app import UnsafeDecorator
-
-
 from glob import glob
 
 

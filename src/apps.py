@@ -18,7 +18,7 @@ class Application(metaclass=abc.ABCMeta):
             "uniq": Uniq,
             "sort": Sort,
         }
-        
+
         if name not in app:
             raise ValueError(f"Unknown application: {name}")
 
@@ -262,7 +262,6 @@ class Find(Application):
         # No argument or more than three arguments
         else:
             raise ValueError("wrong number of command line arguments")
-
 
     def __find(self, dir, pattern=""):
         if dir == "":
