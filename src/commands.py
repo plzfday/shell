@@ -16,11 +16,13 @@ class Call(Command):
 
 
 class Sequence(Command):
-    def __init__(self):
-        pass
+    def __init__(self, app1: Command, app2: Command):
+        self.app1 = app1
+        self.app2 = app2
 
     def eval(self, in_stream, out_stream):
-        pass
+        self.app1.eval(in_stream, out_stream)
+        self.app2.eval(in_stream, out_stream)
 
 
 class Pipe(Command):
