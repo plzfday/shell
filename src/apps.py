@@ -148,7 +148,7 @@ class Grep(Application):
                         line = line.rstrip()
                         if re.match(pattern, line):
                             if len(files) > 1:
-                                out_stream.append(f"{file}:{line}" + "\n")
+                                out_stream.append(f"{file}:{line}\n")
                             else:
                                 out_stream.append(line + "\n")
         else:
