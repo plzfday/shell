@@ -3,7 +3,8 @@ pipe: call "|" call | pipe "|" call
 seq: command ";" command
 
 call: WS? (redirection WS)* argument (WS atom)* WS?
-?atom: redirection | argument
+?atom: redirection 
+     | argument -> arg
 ?argument: (quoted | UNQUOTED)+
 redirection: "<" WS? argument -> l_dir
            | ">" WS? argument -> r_dir

@@ -25,16 +25,21 @@ class ASTConstructor(Visitor_Recursive):
         print("Pipe called", t.children)
 
     def call(self, t):
+        # change the method to catch the app name
         app = t.children[0]
         contents = t.children[1:]
+        print(app, contents)
+
         if app[0] == " ":
             app = t.children[1]
             contents = t.children[2:]
 
+        # arguments are not guaranteed to be strings
         args = []
-        for arg in contents:
-            if arg[0] != " ":
-                args.append(arg)
+        # for arg in contents:
+        #     print(args)
+        #     if arg[0] != " ":
+        #         args.append(arg)
 
         obj = Call(app, args)
         obj.eval(self.in_stream, self.out_stream)
@@ -46,11 +51,10 @@ class ASTConstructor(Visitor_Recursive):
         print("Ldir called", t.children)
 
     def single_quoted(self, t):
-        print("Single quoted called", t.children)
+        self.tokens.append(t.children[0])
 
     def double_quoted(self, t):
-        print(t.children[1])
-        print("Double quoted called", t.children)
+        self.tokens.append(t.children[0])
 
     def back_quoted(self, t):
         content = t.children[0]
