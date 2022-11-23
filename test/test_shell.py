@@ -59,13 +59,20 @@ class TestUniq(unittest.TestCase):
         self.in_stream = deque()
         self.out_stream = deque()
         self.sample_in = ["abc", "ABC", "Abc", "bat", " Ball"]
+        self.sample_in = [x + "\n" for x in self.sample_in]
+        self.sample_stdin = ["abc", "ABC", "Abc", "bat", " Ball"]
+        
         self.sample_default_out = ["abc", "ABC", "Abc", "bat", " Ball"]
-        # -i included
+        self.sample_default_out = [x + "\n" for x in self.sample_default_out]
         self.sample_caseNotSensitive_out = ["abc", "bat", " Ball"]
+        self.sample_caseNotSensitive_out = [x + "\n" for x in self.sample_caseNotSensitive_out]
+        
+        
+
 
         with open("test/test_uniq.txt", "w") as f:
             for line in self.sample_in:
-                f.write(line + "\n")
+                f.write(line)
 
     def test_uniq(self):
         self.app.exec(["test/test_uniq.txt"], self.in_stream, self.out_stream)
@@ -76,12 +83,12 @@ class TestUniq(unittest.TestCase):
         self.assertEqual(self.out_stream, deque(self.sample_caseNotSensitive_out))
 
     def test_uniq_stdin(self):
-        self.in_stream.extend(self.sample_in)
+        self.in_stream.extend(self.sample_stdin)
         self.app.exec([], self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_default_out))
 
     def test_uniq_stdin_with_option(self):
-        self.in_stream.extend(self.sample_in)
+        self.in_stream.extend(self.sample_stdin)
         self.app.exec(["-i"], self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_caseNotSensitive_out))
 
