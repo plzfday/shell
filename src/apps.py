@@ -295,16 +295,14 @@ class Uniq(Application):
         else:
             with open(args[-1], "r") as f:
                 for line in f:
-                    contents.append(line)
+                    contents.append(line.rstrip())
 
         uniq_contents = self.__process_uniq(contents, case_sensitive)
 
         for line in uniq_contents:
-            out_stream.append(line.rstrip())
+            out_stream.append(line + "\n")
 
     def __process_uniq(self, contents, case_sensitive):
-        if len(contents) < 2:
-            return contents
 
         result = []
         cmp = 0
