@@ -26,8 +26,18 @@ class ASTConstructor(Visitor_Recursive):
 
     def call(self, t):
         app = t.children[0]
+        contents = t.children[1:]
         if app[0] == " ":
             app = t.children[1]
+            contents = t.children[2:]
+
+        args = []
+        for arg in contents:
+            if arg[0] != " ":
+                args.append(arg)
+
+        obj = Call(app, args)
+        obj.eval(self.in_stream, self.out_stream)
 
     def r_dir(self, t):
         print("Rdir called", t.children)
