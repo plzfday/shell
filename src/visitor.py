@@ -6,17 +6,15 @@ class ASTConstructor(Visitor_Recursive):
         self.in_stream = in_stream
         self.out_stream = out_stream
 
-    def command(self, t):
-        print("Command called", t.children)
+        self.tokens = []
 
     def seq(self, t):
         print("Sequence called", t.children)
 
     def call(self, t):
-        print("Call called", t.children)
-
-    def argument(self, t):
-        print("Argument called", t.children)
+        app = t.children[0]
+        if app[0] == " ":
+            app = t.children[1]
 
     def r_dir(self, t):
         print("Rdir called", t.children)
@@ -28,7 +26,10 @@ class ASTConstructor(Visitor_Recursive):
         print("Single quoted called", t.children)
 
     def double_quoted(self, t):
+        print(t.children[1])
         print("Double quoted called", t.children)
 
     def back_quoted(self, t):
-        print("Back quoted called", t.children)
+        content = t.children[0]
+        # parse the content again, execute it and return the result
+        print("Back quoted called", content)
