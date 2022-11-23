@@ -1,4 +1,6 @@
 from lark.visitors import Visitor_Recursive
+from commands import Call, Pipe, Sequence
+import glob
 
 
 class ASTConstructor(Visitor_Recursive):
@@ -9,7 +11,18 @@ class ASTConstructor(Visitor_Recursive):
         self.tokens = []
 
     def seq(self, t):
+        app1 = t.children[0]
+        app2 = t.children[1]
+        command = Sequence(app1, app2)
+        command.eval(self.in_stream, self.out_stream)
         print("Sequence called", t.children)
+
+    def pipe(self, t):
+        app1 = t.children[0]
+        app2 = t.children[1]
+        command = Pipe(app1, app2)
+        command.eval(self.in_stream, self.out_stream)
+        print("Pipe called", t.children)
 
     def call(self, t):
         app = t.children[0]

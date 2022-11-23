@@ -1,6 +1,4 @@
 import abc
-from collections import deque
-
 
 class Command(metaclass=abc.ABCMeta):
     @abc.abstractmethod
