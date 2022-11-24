@@ -133,31 +133,26 @@ class Grep(Application):
     def exec(self, args, in_stream, out_stream):
         if len(args) == 1:
             pattern = args[0]
-            sin = sys.stdin
-            sout = sys.stdout
-            while True:
-                try:
-                    s = sin.readline()
-                    if pattern in s:
-                        sout.write(s)
-                    else:
-                        sout.write(s)
-                except KeyboardInterrupt:
-                    break
-        elif len(args) < 2:
-            raise ValueError("wrong number of command line arguments")
-        elif len(args) == 2:
+            while len(in_stream) != 0:
+                s = in_stream.popleft()
+                if pattern in s:
+                    out_stream.append(s)
+        elif len(args) >= 2:
             pattern = args[0]
             files = args[1:]
+
             for file in files:
                 with open(file) as f:
                     lines = f.readlines()
                     for line in lines:
+                        line = line.rstrip()
                         if re.match(pattern, line):
                             if len(files) > 1:
-                                out_stream.append(f"{file}:{line}")
+                                out_stream.append(f"{file}:{line}\n")
                             else:
-                                out_stream.append(line)
+                                out_stream.append(line + "\n")
+        else:
+            raise ValueError("wrong number of command line arguments")
 
 
 class Cut(Application):
@@ -302,16 +297,14 @@ class Uniq(Application):
         else:
             with open(args[-1], "r") as f:
                 for line in f:
-                    contents.append(line)
+                    contents.append(line.rstrip())
 
         uniq_contents = self.__process_uniq(contents, case_sensitive)
 
         for line in uniq_contents:
-            out_stream.append(line)
+            out_stream.append(line + "\n")
 
     def __process_uniq(self, contents, case_sensitive):
-        if len(contents) < 2:
-            return contents
 
         result = []
         cmp = 0
@@ -321,7 +314,7 @@ class Uniq(Application):
             line1 = contents[cmp]
             line2 = contents[idx]
 
-            if case_sensitive:
+            if not case_sensitive:
                 line1 = line1.lower()
                 line2 = line2.lower()
 
