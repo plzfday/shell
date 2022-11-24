@@ -1,4 +1,4 @@
-import sys, re, os, abc
+import re, os, abc
 
 
 class Application(metaclass=abc.ABCMeta):
@@ -133,31 +133,26 @@ class Grep(Application):
     def exec(self, args, in_stream, out_stream):
         if len(args) == 1:
             pattern = args[0]
-            sin = sys.stdin
-            sout = sys.stdout
-            while True:
-                try:
-                    s = sin.readline()
-                    if pattern in s:
-                        sout.write(s)
-                    else:
-                        sout.write(s)
-                except KeyboardInterrupt:
-                    break
-        elif len(args) < 2:
-            raise ValueError("wrong number of command line arguments")
-        elif len(args) == 2:
+            while len(in_stream) != 0:
+                s = in_stream.popleft()
+                if pattern in s:
+                    out_stream.append(s)
+        elif len(args) >= 2:
             pattern = args[0]
             files = args[1:]
+
             for file in files:
                 with open(file) as f:
                     lines = f.readlines()
                     for line in lines:
+                        line = line.rstrip()
                         if re.match(pattern, line):
                             if len(files) > 1:
-                                out_stream.append(f"{file}:{line}")
+                                out_stream.append(f"{file}:{line}\n")
                             else:
-                                out_stream.append(line)
+                                out_stream.append(line + "\n")
+        else:
+            raise ValueError("wrong number of command line arguments")
 
 
 class Cut(Application):
@@ -171,11 +166,11 @@ class Cut(Application):
             intervals = self.__merge_intervals(args[1])
             if len(args) == 2:
                 for line in in_stream:
-                    self.__print_line(line, intervals, out_stream)
+                    self.__print_line(line.rstrip(), intervals, out_stream)
             else:
                 with open(args[2], "r") as f:
                     for line in f:
-                        self.__print_line(line, intervals, out_stream)
+                        self.__print_line(line.rstrip(), intervals, out_stream)
         else:
             raise ValueError("Invalid option")
 
@@ -222,24 +217,22 @@ class Cut(Application):
         return merged
 
     def __print_line(self, line, intervals, out_stream):
+        tmp = []
         for interval in intervals:
-            out_stream.append(line[interval[0] - 1 : interval[1]] + "\n")
+            tmp.append(line[interval[0] - 1 : interval[1]])
+        out_stream.append("".join(tmp) + "\n")
 
 
 class Find(Application):
     def exec(self, args, in_stream, out_stream):
-        # No argument or more than three arguments
-        if len(args) == 0 or len(args) > 3:
-            raise ValueError("wrong number of command line arguments")
-
         # find [PATH] -name PATTERN
-        elif len(args) == 3:
+        if len(args) == 3:
             if args[1] != "-name":
                 raise ValueError("wrong flags")
             else:
                 find_dir = args[0]
-                pattern = self.getRegex(args[2])
-                for file in self.find(find_dir, pattern):
+                pattern = self.__get_regex(args[2])
+                for file in self.__find(find_dir, pattern):
                     out_stream.append(file + "\n")
 
         # find -name PATTERN or find . -name(with out pattern)
@@ -249,8 +242,8 @@ class Find(Application):
             if args[0] != "-name":
                 raise ValueError("wrong flags")
             else:
-                pattern = self.getRegex(args[1])
-                for file in self.find(".", pattern):
+                pattern = self.__get_regex(args[1])
+                for file in self.__find(".", pattern):
                     out_stream.append(file + "\n")
 
         # find [PATH] or find -name(with out pattern)
@@ -258,29 +251,33 @@ class Find(Application):
             if args[0] == "-name":
                 raise ValueError("requires pattern")
             find_dir = args[0]
-            for file in self.find(find_dir):
+            for file in self.__find(find_dir):
                 out_stream.append(file + "\n")
 
-    def find(self, dir, pattern=""):
+        # No argument or more than three arguments
+        else:
+            raise ValueError("wrong number of command line arguments")
+
+    def __find(self, dir, pattern=""):
         if dir == "":
             return []
         files = []
-        for file in os.scandir(dir):
-            if os.path.isdir(file):
-                files = files + self.find(dir + "/" + file.name, pattern)
-            else:
-                if re.match(pattern, file.name):
-                    files.append(dir + "/" + file.name)
+        for file in os.listdir(dir):
+            new_file = os.path.join(dir, file)
+            if re.match(pattern, file):
+                files.append(new_file)
+            if os.path.isdir(new_file) and not os.path.islink(new_file):
+                files = files + self.__find(new_file, pattern)
         return files
 
-    def getRegex(self, pattern):
-        regex = pattern.replace(".", "[.]")
-        regex = regex.replace("*", ".*")
+    def __get_regex(self, pattern):
+        regex = pattern
         if regex[0] == "*":
             regex = regex + "$"
-
-        if regex[:-1] != "*":
+        if regex[-1:] != "*":
             regex = regex + "$"
+        regex = regex.replace(".", "[.]")
+        regex = regex.replace("*", ".*")
         return regex
 
 
@@ -300,16 +297,14 @@ class Uniq(Application):
         else:
             with open(args[-1], "r") as f:
                 for line in f:
-                    contents.append(line)
+                    contents.append(line.rstrip())
 
         uniq_contents = self.__process_uniq(contents, case_sensitive)
 
         for line in uniq_contents:
-            out_stream.append(line)
+            out_stream.append(line + "\n")
 
     def __process_uniq(self, contents, case_sensitive):
-        if len(contents) < 2:
-            return contents
 
         result = []
         cmp = 0
@@ -319,7 +314,7 @@ class Uniq(Application):
             line1 = contents[cmp]
             line2 = contents[idx]
 
-            if case_sensitive:
+            if not case_sensitive:
                 line1 = line1.lower()
                 line2 = line2.lower()
 
