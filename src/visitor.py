@@ -1,6 +1,8 @@
+import os
+
 from lark.visitors import Visitor_Recursive
 from commands import Call, Pipe, Sequence
-import os
+from collections import deque
 
 
 class ASTConstructor(Visitor_Recursive):
@@ -11,7 +13,7 @@ class ASTConstructor(Visitor_Recursive):
         self.tokens = []
 
         self.input_redirection = False
-        self.output_redirection = ''
+        self.output_redirection = ""
 
     def seq(self, t):
         app1 = t.children[0]
@@ -48,13 +50,13 @@ class ASTConstructor(Visitor_Recursive):
         obj.eval(self.in_stream, self.out_stream)
 
     def r_dir(self, t):
-        if self.output_redirection != '':
+        if self.output_redirection != "":
             return ValueError("Mutiple output redirection is not allowed")
 
-        with open(t.children[1], 'w') as f:
+        with open(t.children[1], "w") as f:
             pass
         self.output_redirection = t.children[1]
-        
+
         print("Rdir called", t.children)
 
     def l_dir(self, t):
@@ -64,7 +66,7 @@ class ASTConstructor(Visitor_Recursive):
         if not os.path.isfile(t.children[1]):
             return ValueError("Wrong path or file does not exist input")
 
-        with open(t.children[1], 'r') as f:
+        with open(t.children[1], "r") as f:
             self.in_stream.append(f.read())
         self.input_redirection = True
 
@@ -77,6 +79,13 @@ class ASTConstructor(Visitor_Recursive):
         self.tokens.append(t.children[0])
 
     def back_quoted(self, t):
+        from shell import exec
+
         content = t.children[0]
         # parse the content again, execute it and return the result
+        in_stream = deque()
+        out_stream = deque()
+        exec(content, in_stream, out_stream)
+        self.tokens.append("".join(out_stream))
+
         print("Back quoted called", content)
