@@ -1,6 +1,6 @@
 from lark.visitors import Visitor_Recursive
 from commands import Call, Pipe, Sequence
-import glob
+import os
 
 
 class ASTConstructor(Visitor_Recursive):
@@ -9,6 +9,9 @@ class ASTConstructor(Visitor_Recursive):
         self.out_stream = out_stream
 
         self.tokens = []
+
+        self.input_redirection = False
+        self.output_redirection = ''
 
     def seq(self, t):
         app1 = t.children[0]
@@ -45,9 +48,26 @@ class ASTConstructor(Visitor_Recursive):
         obj.eval(self.in_stream, self.out_stream)
 
     def r_dir(self, t):
+        if self.output_redirection != '':
+            return ValueError("Mutiple output redirection is not allowed")
+
+        with open(t.children[1], 'w') as f:
+            pass
+        self.output_redirection = t.children[1]
+        
         print("Rdir called", t.children)
 
     def l_dir(self, t):
+        if self.input_redirection:
+            return ValueError("Mutiple input redirection is not allowed")
+
+        if not os.path.isfile(t.children[1]):
+            return ValueError("Wrong path or file does not exist input")
+
+        with open(t.children[1], 'r') as f:
+            self.in_stream.append(f.read())
+        self.input_redirection = True
+
         print("Ldir called", t.children)
 
     def single_quoted(self, t):
