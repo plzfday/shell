@@ -1,5 +1,9 @@
 import abc
 
+from apps import Application
+from glob import glob
+
+
 class Command(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def eval(self, in_stream, out_stream):
@@ -7,11 +11,19 @@ class Command(metaclass=abc.ABCMeta):
 
 
 class Call(Command):
-    def __init__(self):
-        pass
+    def __init__(self, app, args):
+        self.app = Application.by_name(app)
+        self.args = args
 
     def eval(self, in_stream, out_stream):
-        pass
+        tokens = []
+        for each in self.args:
+            globbing = glob(each)
+            if globbing:
+                tokens.extend(globbing)
+            else:
+                tokens.append(globbing)
+        self.app.exec(tokens, in_stream, out_stream)
 
 
 class Sequence(Command):
