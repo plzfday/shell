@@ -1,0 +1,51 @@
+name: Build and Test Shell
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:  
+  install:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Setup Python
+      uses: actions/setup-python@v4.3.0
+      with:
+        python-version: '3.10.8'
+  
+  test:
+    needs: install
+    runs-on: ubuntu-latest
+        
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Build Docker Image
+      run: docker build -t shell .
+      
+    - name: Start Unit Tests
+      run: |
+        docker run -it --rm shell /comp0010/tools/test
+        
+    - name: Start Code Analysis
+      run: |
+        docker run -it --rm shell /comp0010/tools/analysis
+        
+    - name: Start Test Coverage
+      run: |
+        docker run -it --rm shell /comp0010/tools/coverage
+  
+  system-test:
+    needs: install
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Build Docker Image
+      run: docker build -t comp0010-system-test .
+    
+    - name: Start System Tests
+      run: python3 ./system_test/tests.py -v
+    

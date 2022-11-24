@@ -151,7 +151,7 @@ class TestFind(unittest.TestCase):
 
     def test_find_name_pattern_front(self):
         self.app.exec(["-name", "*.txt"], self.in_stream, self.out_stream)
-        self.assertEqual(len(self.out_stream), 7)
+        self.assertEqual(len(self.out_stream), 9)
 
     def test_find_name_pattern_back(self):
         self.app.exec(["-name", "test_find*"], self.in_stream, self.out_stream)
