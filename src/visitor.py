@@ -44,10 +44,6 @@ class ASTConstructor(Visitor_Recursive):
             return ValueError("Mutiple output redirection is not allowed")
 
         path = self.tokens.pop()
-
-        with open(path, "w") as f:
-            pass
-
         self.output_redirection = path
 
     def l_dir(self, t):

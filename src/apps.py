@@ -1,4 +1,6 @@
-import re, os, abc
+import re
+import os
+import abc
 
 
 class Application(metaclass=abc.ABCMeta):
@@ -219,7 +221,7 @@ class Cut(Application):
     def __print_line(self, line, intervals, out_stream):
         tmp = []
         for interval in intervals:
-            tmp.append(line[interval[0] - 1 : interval[1]])
+            tmp.append(line[interval[0] - 1:interval[1]])
         out_stream.append("".join(tmp) + "\n")
 
 

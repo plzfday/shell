@@ -1,4 +1,5 @@
-import sys, os
+import sys
+import os
 
 from collections import deque
 from manager import ShellManager

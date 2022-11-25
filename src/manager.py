@@ -9,8 +9,8 @@ class ShellManager:
         self.in_stream = in_stream
         self.out_stream = out_stream
 
-        FILE_NAME = "shell.lark"
-        GRAMMAR_FILE = os.path.join(os.path.dirname(__file__), "grammars", FILE_NAME)
+        FILE_PATH = "grammars/shell.lark"
+        GRAMMAR_FILE = os.path.join(os.path.dirname(__file__), FILE_PATH)
         grammar = open(GRAMMAR_FILE).read()
         self.__parser = Lark(grammar, start="start")
 

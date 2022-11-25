@@ -12,7 +12,17 @@ class Command(metaclass=abc.ABCMeta):
 
 class Call(Command):
     def __init__(self, app, args):
+        from unsafe_app import UnsafeDecorator
+
+        unsafe_app = False
+        if app[0] == "_":
+            unsafe_app = True
+            app = app[1:]
+
         self.app = Application.by_name(app)
+        if unsafe_app:
+            self.app = UnsafeDecorator(self.app)
+
         self.args = args
 
     def eval(self, in_stream, out_stream):
@@ -22,7 +32,7 @@ class Call(Command):
             if globbing:
                 tokens.extend(globbing)
             else:
-                tokens.append(globbing)
+                tokens.append(each)
         self.app.exec(tokens, in_stream, out_stream)
 
 
