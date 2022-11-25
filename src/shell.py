@@ -1,12 +1,13 @@
-import sys, os
+import sys
+import os
 
 from collections import deque
-from command import Command
+from manager import ShellManager
 
 
-def eval(cmdline, in_stream, out_stream):
-    command = Command(cmdline)
-    command.eval(in_stream, out_stream)
+def exec(cmdline, in_stream, out_stream):
+    manager = ShellManager(in_stream, out_stream)
+    manager.parse(cmdline)
 
 
 if __name__ == "__main__":
@@ -16,8 +17,9 @@ if __name__ == "__main__":
             raise ValueError("wrong number of command line arguments")
         if sys.argv[1] != "-c":
             raise ValueError(f"unexpected command line argument {sys.argv[1]}")
+        in_stream = deque()
         out_stream = deque()
-        eval(sys.argv[2], out_stream)
+        exec(sys.argv[2], in_stream, out_stream)
         while len(out_stream) > 0:
             print(out_stream.popleft(), end="")
     else:
@@ -26,6 +28,6 @@ if __name__ == "__main__":
             cmdline = input()
             in_stream = deque()
             out_stream = deque()
-            eval(cmdline, in_stream, out_stream)
+            exec(cmdline, in_stream, out_stream)
             while len(out_stream) > 0:
                 print(out_stream.popleft(), end="")

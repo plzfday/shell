@@ -1,4 +1,6 @@
-import sys, re, os, abc
+import re
+import os
+import abc
 
 
 class Application(metaclass=abc.ABCMeta):
@@ -60,7 +62,9 @@ class Cat(Application):
         if len(args) != 0:
             for a in args:
                 with open(a) as f:
-                    out_stream.append(f.read())
+                    lines = f.readlines()
+                    for line in lines:
+                        out_stream.append(line)
         else:
             for line in in_stream:
                 out_stream.append(line)
@@ -219,7 +223,7 @@ class Cut(Application):
     def __print_line(self, line, intervals, out_stream):
         tmp = []
         for interval in intervals:
-            tmp.append(line[interval[0] - 1 : interval[1]])
+            tmp.append(line[interval[0] - 1:interval[1]])
         out_stream.append("".join(tmp) + "\n")
 
 
