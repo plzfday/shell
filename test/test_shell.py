@@ -33,7 +33,9 @@ class TestGrep(unittest.TestCase):
 
     def test_grep(self):
         self.app.exec(
-            [self.sample_pattern, "test/test_grep.txt"], self.in_stream, self.out_stream
+            [self.sample_pattern, "test/test_grep.txt"],
+            self.in_stream,
+            self.out_stream
         )
         self.assertEqual(self.out_stream, deque(self.sample_default_out))
 
@@ -61,14 +63,12 @@ class TestUniq(unittest.TestCase):
         self.sample_in = ["abc", "ABC", "Abc", "bat", " Ball"]
         self.sample_in = [x + "\n" for x in self.sample_in]
         self.sample_stdin = ["abc", "ABC", "Abc", "bat", " Ball"]
-        
+
         self.sample_default_out = ["abc", "ABC", "Abc", "bat", " Ball"]
         self.sample_default_out = [x + "\n" for x in self.sample_default_out]
         self.sample_caseNotSensitive_out = ["abc", "bat", " Ball"]
-        self.sample_caseNotSensitive_out = [x + "\n" for x in self.sample_caseNotSensitive_out]
-        
-        
-
+        self.sample_caseNotSensitive_out = [
+            x + "\n" for x in self.sample_caseNotSensitive_out]
 
         with open("test/test_uniq.txt", "w") as f:
             for line in self.sample_in:
@@ -79,8 +79,10 @@ class TestUniq(unittest.TestCase):
         self.assertEqual(self.out_stream, deque(self.sample_default_out))
 
     def test_uniq_caseNotSensitive(self):
-        self.app.exec(["-i", "test/test_uniq.txt"], self.in_stream, self.out_stream)
-        self.assertEqual(self.out_stream, deque(self.sample_caseNotSensitive_out))
+        self.app.exec(["-i", "test/test_uniq.txt"],
+                      self.in_stream, self.out_stream)
+        self.assertEqual(self.out_stream, deque(
+            self.sample_caseNotSensitive_out))
 
     def test_uniq_stdin(self):
         self.in_stream.extend(self.sample_stdin)
@@ -90,7 +92,8 @@ class TestUniq(unittest.TestCase):
     def test_uniq_stdin_with_option(self):
         self.in_stream.extend(self.sample_stdin)
         self.app.exec(["-i"], self.in_stream, self.out_stream)
-        self.assertEqual(self.out_stream, deque(self.sample_caseNotSensitive_out))
+        self.assertEqual(self.out_stream, deque(
+            self.sample_caseNotSensitive_out))
 
 
 class TestSort(unittest.TestCase):
@@ -103,7 +106,8 @@ class TestSort(unittest.TestCase):
 
         self.sample_in = ["bat", "abc", " apple", " Abc", "BALL", "ABc", "bat"]
         self.sample_in = [x + "\n" for x in self.sample_in]
-        self.sample_out = [" Abc", " apple", "ABc", "BALL", "abc", "bat", "bat"]
+        self.sample_out = [" Abc", " apple",
+                           "ABc", "BALL", "abc", "bat", "bat"]
         self.sample_out = [x + "\n" for x in self.sample_out]
 
         with open("./test_sort.txt", "w") as f:
@@ -115,13 +119,15 @@ class TestSort(unittest.TestCase):
         self.assertEqual(self.out_stream, deque(self.sample_out))
 
     def test_sort_reverse(self):
-        self.app.exec(["-r", "./test_sort.txt"], self.in_stream, self.out_stream)
+        self.app.exec(["-r", "./test_sort.txt"],
+                      self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_out[::-1]))
 
     def test_sort_stdin(self):
         self.in_stream.extend(self.sample_in)
         self.app.exec([], self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_out))
+
 
 class TestFind(unittest.TestCase):
     def setUp(self):
@@ -132,21 +138,24 @@ class TestFind(unittest.TestCase):
 
         with open("test/test_find.txt", "w") as f:
             f.write("")
-    
+
     def test_find_dir(self):
         self.app.exec(["test"], self.in_stream, self.out_stream)
         self.assertEqual(len(self.out_stream), 4)
 
     def test_find_dir_root(self):
-            self.app.exec(["..", "-name", "test_find.txt"], self.in_stream, self.out_stream)
-            self.assertEqual(self.out_stream, deque(["../comp0010/test/test_find.txt\n"]))
+        self.app.exec(["..", "-name", "test_find.txt"],
+                      self.in_stream, self.out_stream)
+        self.assertEqual(self.out_stream, deque(
+            ["../comp0010/test/test_find.txt\n"]))
 
     def test_find_no_dir(self):
-            self.app.exec([""], self.in_stream, self.out_stream)
-            self.assertEqual(self.out_stream, deque([]))
+        self.app.exec([""], self.in_stream, self.out_stream)
+        self.assertEqual(self.out_stream, deque([]))
 
     def test_find_name_test_find_dot_txt(self):
-        self.app.exec(["-name", "test_find.txt"], self.in_stream, self.out_stream)
+        self.app.exec(["-name", "test_find.txt"],
+                      self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(["./test/test_find.txt\n"]))
 
     def test_find_name_pattern_front(self):
@@ -162,8 +171,10 @@ class TestFind(unittest.TestCase):
         self.assertEqual(self.out_stream, deque(["./test/test_find.txt\n"]))
 
     def test_find_dir_name_pattern(self):
-        self.app.exec(["test", "-name", "*.txt"], self.in_stream, self.out_stream)
+        self.app.exec(["test", "-name", "*.txt"],
+                      self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(["test/test_find.txt\n"]))
+
 
 class TestCut(unittest.TestCase):
     def setUp(self):
@@ -181,7 +192,8 @@ class TestCut(unittest.TestCase):
                 f.write(line)
 
     def test_cut_no_range(self):
-        self.app.exec(["-b", "2,3", "./test_cut.txt"], self.in_stream, self.out_stream)
+        self.app.exec(["-b", "2,3", "./test_cut.txt"],
+                      self.in_stream, self.out_stream)
         expected = [" 2\n", " 7\n"]
         self.assertEqual(self.out_stream, deque(expected))
 
@@ -192,19 +204,23 @@ class TestCut(unittest.TestCase):
         self.assertEqual(self.out_stream, deque(expected))
 
     def test_cut_one_close_range(self):
-        self.app.exec(["-b", "2-3", "./test_cut.txt"], self.in_stream, self.out_stream)
+        self.app.exec(["-b", "2-3", "./test_cut.txt"],
+                      self.in_stream, self.out_stream)
         expected = [" 2\n", " 7\n"]
         self.assertEqual(self.out_stream, deque(expected))
 
     def test_cut_two_close_ranges(self):
         self.app.exec(
-            ["-b", "2-3,4-5", "./test_cut.txt"], self.in_stream, self.out_stream
+            ["-b", "2-3,4-5", "./test_cut.txt"],
+            self.in_stream,
+            self.out_stream
         )
         expected = [" 2 3\n", " 7 8\n"]
         self.assertEqual(self.out_stream, deque(expected))
 
     def test_cut_one_open_range(self):
-        self.app.exec(["-b", "2-", "./test_cut.txt"], self.in_stream, self.out_stream)
+        self.app.exec(["-b", "2-", "./test_cut.txt"],
+                      self.in_stream, self.out_stream)
         expected = [" 2 3 4 5\n", " 7 8 9 10\n"]
         self.assertEqual(self.out_stream, deque(expected))
 
