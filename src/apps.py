@@ -62,7 +62,9 @@ class Cat(Application):
         if len(args) != 0:
             for a in args:
                 with open(a) as f:
-                    out_stream.append(f.read())
+                    lines = f.readlines()
+                    for line in lines:
+                        out_stream.append(line)
         else:
             for line in in_stream:
                 out_stream.append(line)

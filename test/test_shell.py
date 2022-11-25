@@ -1,4 +1,5 @@
 import unittest
+import os
 
 from collections import deque
 
@@ -136,18 +137,20 @@ class TestFind(unittest.TestCase):
         self.in_stream = deque()
         self.out_stream = deque()
 
-        with open("test/test_find.txt", "w") as f:
+        filename = "find/test_find.txt"
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
+        with open(filename, "w") as f:
             f.write("")
 
     def test_find_dir(self):
-        self.app.exec(["test"], self.in_stream, self.out_stream)
-        self.assertEqual(len(self.out_stream), 4)
+        self.app.exec(["find"], self.in_stream, self.out_stream)
+        self.assertEqual(len(self.out_stream), 1)
 
     def test_find_dir_root(self):
         self.app.exec(["..", "-name", "test_find.txt"],
                       self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(
-            ["../comp0010/test/test_find.txt\n"]))
+            ["../comp0010/find/test_find.txt\n"]))
 
     def test_find_no_dir(self):
         self.app.exec([""], self.in_stream, self.out_stream)
@@ -156,24 +159,25 @@ class TestFind(unittest.TestCase):
     def test_find_name_test_find_dot_txt(self):
         self.app.exec(["-name", "test_find.txt"],
                       self.in_stream, self.out_stream)
-        self.assertEqual(self.out_stream, deque(["./test/test_find.txt\n"]))
+        self.assertEqual(self.out_stream, deque(["./find/test_find.txt\n"]))
 
     def test_find_name_pattern_front(self):
-        self.app.exec(["-name", "*.txt"], self.in_stream, self.out_stream)
-        self.assertEqual(len(self.out_stream), 7)
+        self.app.exec(["-name", "*find.txt"], self.in_stream, self.out_stream)
+        self.assertEqual(self.out_stream, deque(["./find/test_find.txt\n"]))
 
     def test_find_name_pattern_back(self):
         self.app.exec(["-name", "test_find*"], self.in_stream, self.out_stream)
-        self.assertEqual(self.out_stream, deque(["./test/test_find.txt\n"]))
+        self.assertEqual(self.out_stream, deque(["./find/test_find.txt\n"]))
 
     def test_find_name_pattern_front_back(self):
         self.app.exec(["-name", "*find*"], self.in_stream, self.out_stream)
-        self.assertEqual(self.out_stream, deque(["./test/test_find.txt\n"]))
+        self.assertEqual(self.out_stream, deque(
+            ["./find\n", "./find/test_find.txt\n"]))
 
     def test_find_dir_name_pattern(self):
-        self.app.exec(["test", "-name", "*.txt"],
+        self.app.exec(["find", "-name", "*.txt"],
                       self.in_stream, self.out_stream)
-        self.assertEqual(self.out_stream, deque(["test/test_find.txt\n"]))
+        self.assertEqual(self.out_stream, deque(["find/test_find.txt\n"]))
 
 
 class TestCut(unittest.TestCase):
@@ -237,6 +241,80 @@ class TestCut(unittest.TestCase):
         )
         expected = [" 2 3 4 5\n", " 7 8 9 10\n"]
         self.assertEqual(self.out_stream, deque(expected))
+
+
+class TestCall(unittest.TestCase):
+    def setUp(self):
+
+        self.in_stream = deque()
+        self.out_stream = deque()
+
+        self.sample_in = ["hello", "world"]
+        self.sample_in = [x + "\n" for x in self.sample_in]
+        self.sample_out = ["hello", "world"]
+        self.sample_out = [x + "\n" for x in self.sample_out]
+
+        with open("test/test_call.txt", "w") as f:
+            for line in self.sample_in:
+                f.write(line)
+
+    def test_call_no_globbing(self):
+        from commands import Call
+        call = Call('echo', ['foo'])
+        call.eval(self.in_stream, self.out_stream)
+        self.assertEqual(self.out_stream, deque(['foo\n']))
+
+    def test_call_include_globbing(self):
+        from commands import Call
+        call = Call('cat', ['test/test_call.txt'])
+        call.eval(self.in_stream, self.out_stream)
+        self.assertEqual(self.out_stream, deque(self.sample_out))
+
+
+class TestSequence(unittest.TestCase):
+    def setUp(self):
+        self.in_stream = deque()
+        self.out_stream = deque()
+        self.sample_in = ["hello", "world"]
+        self.sample_in = [x + "\n" for x in self.sample_in]
+        self.sample_out = ["foo", "hello", "world"]
+        self.sample_out = [x + "\n" for x in self.sample_out]
+
+        with open("test/test_sequence.txt", "w") as f:
+            for line in self.sample_in:
+                f.write(line)
+
+    def test_sequence(self):
+        from commands import Call, Sequence
+        app1 = Call('echo', ['foo'])
+        app2 = Call('cat', ["test/test_sequence.txt"])
+        seq = Sequence(app1, app2)
+
+        seq.eval(self.in_stream, self.out_stream)
+        self.assertEqual(self.out_stream, deque(self.sample_out))
+
+
+class TestPipe(unittest.TestCase):
+    def setUp(self):
+        self.in_stream = deque()
+        self.out_stream = deque()
+        self.sample_in = ["foo", "bar"]
+        self.sample_in = [x + "\n" for x in self.sample_in]
+        self.sample_out = ["foo"]
+        self.sample_out = [x + "\n" for x in self.sample_out]
+
+        with open("test/test_pipe.txt", "w") as f:
+            for line in self.sample_in:
+                f.write(line)
+
+    def test_pipe(self):
+        from commands import Call, Pipe
+        app1 = Call('cat', ["test/test_pipe.txt"])
+        app2 = Call('grep', ["foo"])
+        pipe = Pipe(app1, app2)
+
+        pipe.eval(self.in_stream, self.out_stream)
+        self.assertEqual(self.out_stream, deque(self.sample_out))
 
 
 if __name__ == "__main__":
