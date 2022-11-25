@@ -249,13 +249,22 @@ class TestCall(unittest.TestCase):
         self.in_stream = deque()
         self.out_stream = deque()
 
-        self.sample_in = ["hello", "world"]
-        self.sample_in = [x + "\n" for x in self.sample_in]
-        self.sample_out = ["hello", "world"]
+        self.sample_in1 = ["hello", "world"]
+        self.sample_in1 = [x + "\n" for x in self.sample_in1]
+        self.sample_in2 = ["foo", "bar"]
+        self.sample_in2 = [x + "\n" for x in self.sample_in2]
+        self.sample_out = ["hello", "world", "foo", "bar"]
         self.sample_out = [x + "\n" for x in self.sample_out]
 
-        with open("test/test_call.txt", "w") as f:
-            for line in self.sample_in:
+        filename = "call/"
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
+
+        with open("call/test_call1.txt", "w") as f:
+            for line in self.sample_in1:
+                f.write(line)
+
+        with open("call/test_call2.txt", "w") as f:
+            for line in self.sample_in2:
                 f.write(line)
 
     def test_call_no_globbing(self):
@@ -266,7 +275,7 @@ class TestCall(unittest.TestCase):
 
     def test_call_include_globbing(self):
         from commands import Call
-        call = Call('cat', ['test/test_call.txt'])
+        call = Call('cat', ['call/*.txt'])
         call.eval(self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_out))
 
