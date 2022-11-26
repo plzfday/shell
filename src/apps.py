@@ -99,7 +99,8 @@ class Head(Application):
             with open(file) as f:
                 lines = f.readlines()
                 for i in range(min(len(lines), num_lines)):
-                    out_stream.append(lines[i])
+                    line = lines[i].rstrip()
+                    out_stream.append(line + "\n")
 
 
 class Tail(Application):
@@ -130,7 +131,8 @@ class Tail(Application):
                 lines = f.readlines()
                 display_length = min(len(lines), num_lines)
                 for i in range(display_length):
-                    out_stream.append(lines[len(lines) - display_length + i])
+                    line = lines[len(lines) - display_length + i].rstrip()
+                    out_stream.append(line + "\n")
 
 
 class Grep(Application):
