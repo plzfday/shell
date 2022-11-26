@@ -248,7 +248,7 @@ class TestCut(unittest.TestCase):
         expected = [" 2 3 4 5\n", " 7 8 9 10\n"]
         self.assertEqual(self.out_stream, deque(expected))
 
-    def test_cut_no_range(self):
+    def test_cut_empty_search(self):
         self.app.exec(
             ["-b", "3-1", "./test_cut.txt"],
             self.in_stream,
