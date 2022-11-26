@@ -228,6 +228,12 @@ class TestCut(unittest.TestCase):
         expected = [" 2 3 4 5\n", " 7 8 9 10\n"]
         self.assertEqual(self.out_stream, deque(expected))
 
+    def test_cut_first_is_open(self):
+        self.app.exec(["-b", "-3", "./test_cut.txt"],
+                      self.in_stream, self.out_stream)
+        expected = ["1 2\n", "6 7\n"]
+        self.assertEqual(self.out_stream, deque(expected))
+
     def test_cut_two_open_ranges(self):
         self.app.exec(
             ["-b", "2-,4-", "./test_cut.txt"], self.in_stream, self.out_stream
