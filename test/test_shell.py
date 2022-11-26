@@ -236,7 +236,9 @@ class TestGrep(unittest.TestCase):
 
     def test_grep(self):
         self.app.exec(
-            [self.sample_pattern, "test/test_grep.txt"], self.in_stream, self.out_stream
+            [self.sample_pattern, "test/test_grep.txt"],
+            self.in_stream,
+            self.out_stream
         )
         self.assertEqual(self.out_stream, deque(self.sample_default_out))
 
