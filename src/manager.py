@@ -16,7 +16,6 @@ class ShellManager:
 
     def parse(self, cmdline):
         tree = self.__parser.parse(cmdline)
-        print(tree.pretty())
         visitor = ASTConstructor(self.in_stream, self.out_stream)
         visitor.visit(tree)
         if visitor.output_redirection != "":

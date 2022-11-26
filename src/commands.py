@@ -28,7 +28,7 @@ class Call(Command):
     def eval(self, in_stream, out_stream):
         tokens = []
         for each in self.args:
-            globbing = glob(each)
+            globbing = sorted(glob(each))
             if globbing:
                 tokens.extend(globbing)
             else:

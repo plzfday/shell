@@ -52,7 +52,7 @@ class Ls(Application):
         else:
             ls_dir = args[0]
 
-        for f in os.listdir(ls_dir):
+        for f in sorted(os.listdir(ls_dir)):
             if not f.startswith("."):
                 out_stream.append(f + "\n")
 
