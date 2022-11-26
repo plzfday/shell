@@ -45,10 +45,10 @@ class TestLs(unittest.TestCase):
         self.in_stream = deque()
         self.out_stream = deque()
         self.sample_path = "tools"
-        # results of "ls tools"
+        # results of "ls /comp0010/tools"
         self.sample_out = ["coverage\n", "analysis\n", "test\n"]
         # the number of results of "ls comp0010"
-        self.sample_out_number = 13
+        self.sample_out_number = 12
 
     def test_ls(self):
         self.app.exec([self.sample_path], self.in_stream, self.out_stream)
