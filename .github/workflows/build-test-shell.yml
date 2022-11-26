@@ -1,8 +1,8 @@
 name: Build and Test Shell
 
 on:
-  push:
-    branches: [ "github-action" ]
+  pull_request:
+    types: [closed]
 
 jobs:  
   install:
