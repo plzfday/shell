@@ -34,8 +34,7 @@ class TestCd(unittest.TestCase):
         self.assertEqual(os.getcwd(), self.sample_out)
 
     def tearDown(self):
-        self.app.exec(["/"], self.in_stream, self.out_stream)
-        self.app.exec(["comp0010"], self.in_stream, self.out_stream)
+        self.app.exec(["/comp0010"], self.in_stream, self.out_stream)
 
 
 class TestLs(unittest.TestCase):
