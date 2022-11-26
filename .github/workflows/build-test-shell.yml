@@ -1,8 +1,8 @@
 name: Build and Test Shell
 
 on:
-  pull_request:
-    types: [closed]
+  push:
+    branches: [ "github-action" ]
 
 jobs:  
   install:
@@ -26,15 +26,15 @@ jobs:
       
     - name: Start Unit Tests
       run: |
-        docker run -it --rm shell /comp0010/tools/test
+        docker run --rm shell /comp0010/tools/test
         
     - name: Start Code Analysis
       run: |
-        docker run -it --rm shell /comp0010/tools/analysis
+        docker run --rm shell /comp0010/tools/analysis
         
     - name: Start Test Coverage
       run: |
-        docker run -it --rm shell /comp0010/tools/coverage
+        docker run --rm shell /comp0010/tools/coverage
   
   system-test:
     needs: install
