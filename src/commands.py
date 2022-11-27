@@ -28,11 +28,14 @@ class Call(Command):
     def eval(self, in_stream, out_stream):
         tokens = []
         for each in self.args:
-            globbing = sorted(glob(each))
-            if globbing:
-                tokens.extend(globbing)
+            if type(each) == tuple:
+                tokens.append(each[0])
             else:
-                tokens.append(each)
+                globbing = sorted(glob(each))
+                if globbing:
+                    tokens.extend(globbing)
+                else:
+                    tokens.append(each)
         self.app.exec(tokens, in_stream, out_stream)
 
 
