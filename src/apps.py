@@ -89,14 +89,13 @@ class Head(Application):
             except ValueError:
                 raise ValueError("wrong flags")
 
-            args.pop(0)
-            args.pop(0)
+            args_num -= 2
 
-        if len(args) == 0:
+        if args_num == 0:
             for i in range(min(len(in_stream), num_lines)):
                 out_stream.append(in_stream.popleft())
         else:
-            file = args[0]
+            file = args[-1]
             with open(file) as f:
                 lines = f.readlines()
                 for i in range(min(len(lines), num_lines)):
@@ -118,17 +117,16 @@ class Tail(Application):
             except ValueError:
                 raise ValueError("wrong flags")
 
-            args.pop(0)
-            args.pop(0)
+            args_num -= 2
 
-        if len(args) == 0:
+        if args_num == 0:
             display_length = min(len(in_stream), num_lines)
             for i in range(len(in_stream) - display_length):
                 in_stream.popleft()
             for i in range(display_length):
                 out_stream.append(in_stream.popleft())
         else:
-            file = args[0]
+            file = args[-1]
             with open(file) as f:
                 lines = f.readlines()
                 display_length = min(len(lines), num_lines)
