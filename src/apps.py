@@ -33,6 +33,8 @@ class Application(metaclass=abc.ABCMeta):
 
 class Pwd(Application):
     def exec(self, args, in_stream, out_stream):
+        if len(args) > 0:
+            raise ValueError("wrong number of command line arguments")
         out_stream.append(os.getcwd() + "\n")
 
 
@@ -191,7 +193,7 @@ class Cut(Application):
             if len(tmp) == 1:
                 intervals.append([int(tmp[0]), int(tmp[0])])
             elif len(tmp) == 2:
-                if tmp == ("", ""):
+                if tmp == ["", ""]:
                     raise ValueError("Invalid range")
                 elif tmp[0] == "":
                     # Case: -num2

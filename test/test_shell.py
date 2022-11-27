@@ -1,5 +1,8 @@
-import unittest
 import os
+
+import unittest
+
+from unittest.mock import patch
 
 from collections import deque
 
@@ -17,6 +20,13 @@ class TestPwd(unittest.TestCase):
         self.app.exec([], self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_out))
 
+    def test_pwd_too_many_arguments(self):
+        try:
+            self.app.exec(["foo"], self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "wrong number of command line arguments")
+
 
 class TestCd(unittest.TestCase):
     def setUp(self):
@@ -31,6 +41,20 @@ class TestCd(unittest.TestCase):
     def test_cd(self):
         self.app.exec([self.sample_path], self.in_stream, self.out_stream)
         self.assertEqual(os.getcwd(), self.sample_out)
+
+    def test_cd_no_path(self):
+        try:
+            self.app.exec([], self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "wrong number of command line arguments")
+
+    def test_cd_too_many_args(self):
+        try:
+            self.app.exec(["foo", "bar"], self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "wrong number of command line arguments")
 
     def tearDown(self):
         self.app.exec(["/comp0010"], self.in_stream, self.out_stream)
@@ -56,6 +80,13 @@ class TestLs(unittest.TestCase):
     def test_ls_stdin(self):
         self.app.exec([], self.in_stream, self.out_stream)
         self.assertEqual(len(self.out_stream), self.sample_out_number)
+
+    def test_ls_too_many_args(self):
+        try:
+            self.app.exec(["foo", "bar"], self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "wrong number of command line arguments")
 
 
 class TestCat(unittest.TestCase):
@@ -152,6 +183,28 @@ class TestHead(unittest.TestCase):
         self.app.exec(["-n", "4"], self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_stdout))
 
+    def test_head_incorrect_flag(self):
+        try:
+            self.app.exec(["-num", "4"], self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "wrong flags")
+
+    def test_head_no_args(self):
+        try:
+            self.app.exec([], self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "wrong number of command line arguments")
+
+    def test_head_too_many_args(self):
+        try:
+            self.app.exec(["-n", "11", "12", "test/test_head.txt"],
+                          self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "wrong number of command line arguments")
+
 
 class TestTail(unittest.TestCase):
     def setUp(self):
@@ -205,6 +258,28 @@ class TestTail(unittest.TestCase):
         self.app.exec(["-n", "4"], self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_stdout))
 
+    def test_tail_incorrect_flag(self):
+        try:
+            self.app.exec(["-num", "4"], self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "wrong flags")
+
+    def test_tail_no_args(self):
+        try:
+            self.app.exec([], self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "wrong number of command line arguments")
+
+    def test_tail_too_many_args(self):
+        try:
+            self.app.exec(["-n", "2", "4", "test/test_head.txt"],
+                          self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "wrong number of command line arguments")
+
 
 class TestGrep(unittest.TestCase):
     def setUp(self):
@@ -254,6 +329,13 @@ class TestGrep(unittest.TestCase):
         self.app.exec([self.sample_pattern], self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_stdout))
 
+    def test_grep_no_args(self):
+        try:
+            self.app.exec([], self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "wrong number of command line arguments")
+
 
 class TestUniq(unittest.TestCase):
     def setUp(self):
@@ -298,6 +380,14 @@ class TestUniq(unittest.TestCase):
         self.assertEqual(self.out_stream, deque(
             self.sample_caseNotSensitive_out))
 
+    def test_uniq_too_many_args(self):
+        try:
+            self.app.exec(["-i", "test", "test/test_uniq.txt"],
+                          self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "wrong number of command line arguments")
+
 
 class TestSort(unittest.TestCase):
     def setUp(self):
@@ -330,6 +420,14 @@ class TestSort(unittest.TestCase):
         self.in_stream.extend(self.sample_in)
         self.app.exec([], self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_out))
+
+    def test_sort_too_many_args(self):
+        try:
+            self.app.exec(["-r", "test", "./test_sort.txt"],
+                          self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "sort: wrong number of arguments")
 
 
 class TestFind(unittest.TestCase):
@@ -382,6 +480,39 @@ class TestFind(unittest.TestCase):
                       self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(["find/test_find.txt\n"]))
 
+    def test_find_no_args(self):
+        try:
+            self.app.exec([], self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "wrong number of command line arguments")
+
+    def test_find_one_arg_no_pattern(self):
+        try:
+            self.app.exec(["-name"], self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(str(error), "requires pattern")
+
+    def test_find_two_args_no_pattern(self):
+        try:
+            self.app.exec(["find", "-name"], self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(str(error), "requires pattern")
+
+    def test_find_two_args_wrong_flag(self):
+        try:
+            self.app.exec(["-n", "test_find.txt"],
+                          self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(str(error), "wrong flags")
+
+    def test_find_three_args_wrong_flag(self):
+        try:
+            self.app.exec(["find", "-n", "test_find.txt"],
+                          self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(str(error), "wrong flags")
+
 
 class TestCut(unittest.TestCase):
     def setUp(self):
@@ -418,8 +549,8 @@ class TestCut(unittest.TestCase):
 
     def test_cut_two_close_ranges(self):
         self.app.exec(
-            ["-b", "2-3,4-5", "./test_cut.txt"], self.in_stream, self.out_stream
-        )
+            ["-b", "2-3,4-5", "./test_cut.txt"],
+            self.in_stream, self.out_stream)
         expected = [" 2 3\n", " 7 8\n"]
         self.assertEqual(self.out_stream, deque(expected))
 
@@ -457,6 +588,45 @@ class TestCut(unittest.TestCase):
         )
         expected = ["\n", "\n"]
         self.assertEqual(self.out_stream, deque(expected))
+
+    def test_cut_incorrect_flag(self):
+        try:
+            self.app.exec(["-r", "1-3", "./test_cut.txt"],
+                          self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "Invalid option")
+
+    def test_cut_few_args(self):
+        try:
+            self.app.exec([], self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "Invalid number of arguments")
+
+    def test_cut_too_many_args(self):
+        try:
+            self.app.exec(["-b", "1-3", "4-5", "./test_cut.txt"],
+                          self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "Invalid number of arguments")
+
+    def test_cut_no_byte_range(self):
+        try:
+            self.app.exec(["-b", "-", "./test_cut.txt"],
+                          self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "Invalid range")
+
+    def test_cut_invalid_byte_range(self):
+        try:
+            self.app.exec(["-b", "1-2-3", "./test_cut.txt"],
+                          self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "Invalid input")
 
 
 class TestCall(unittest.TestCase):
@@ -541,6 +711,7 @@ class TestPipe(unittest.TestCase):
         pipe.eval(self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_out))
 
+
 class TestUnsafeDecorator(unittest.TestCase):
     def setUp(self):
         self.in_stream = deque()
@@ -560,6 +731,47 @@ class TestUnsafeDecorator(unittest.TestCase):
         call = Call('_ls', ['foo', 'bar'])
         call.eval(self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_out))
+
+
+class TestApplication(unittest.TestCase):
+    def setUp(self):
+        self.in_stream = deque()
+        self.out_stream = deque()
+
+    def test_application_unknown_app(self):
+        from apps import Application
+        try:
+            Application.by_name("foo")
+        except ValueError as error:
+            self.assertEqual(str(error), "Unknown application: foo")
+
+    from apps import Application
+
+    @patch.multiple(Application, __abstractmethods__=set())
+    def test_application_not_implemented(self):
+        from apps import Application
+        app = Application()
+        try:
+            app.exec([], self.in_stream, self.out_stream)
+        except NotImplementedError as error:
+            self.assertEqual(str(error), '')
+
+
+class TestCommand(unittest.TestCase):
+    def setUp(self):
+        self.in_stream = deque()
+        self.out_stream = deque()
+
+    from commands import Command
+
+    @patch.multiple(Command, __abstractmethods__=set())
+    def test_application_not_implemented(self):
+        from commands import Command
+        command = Command()
+        try:
+            command.eval(self.in_stream, self.out_stream)
+        except NotImplementedError as error:
+            self.assertEqual(str(error), '')
 
 
 if __name__ == "__main__":
