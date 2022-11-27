@@ -56,7 +56,7 @@ class ASTConstructor(Visitor_Recursive):
             return ValueError("Wrong path or file does not exist input")
 
         with open(path, "r") as f:
-            self.in_stream.append(f.read())
+            self.in_stream.extend(f.readlines())
 
         self.input_redirection = True
 
