@@ -12,6 +12,7 @@ class ASTConstructor(Visitor_Recursive):
         self.out_stream = out_stream
 
         self.tokens = deque()
+        self.substitutions = deque()
         self.apps = deque()
 
         self.input_redirection = False
@@ -61,11 +62,27 @@ class ASTConstructor(Visitor_Recursive):
         self.input_redirection = True
 
     def argument(self, t):
-        if isinstance(t.children[0], Token):
-            self.tokens.append(str(t.children[0]))
+        s = []
+        for child in t.children:
+            if isinstance(child, Token):
+                s.append(str(child))
+            elif child.data == "double_quoted":
+                s.append(self.tokens.pop())
+            elif child.data == "back_quoted":
+                s.append(self.substitutions.popleft())
+        self.tokens.append("".join(s))
 
-    def quote(self, t):
-        self.tokens.append(str(t.children[0]))
+    def single_quoted(self, t):
+        self.tokens.append(t.children[0])
+
+    def double_quoted(self, t):
+        s = []
+        for i in t.children:
+            if isinstance(i, Token):
+                s.append(str(i))
+            else:
+                s.append(self.substitutions.popleft())
+        self.tokens.append("".join(s))
 
     def back_quoted(self, t):
         from shell import exec
@@ -75,4 +92,5 @@ class ASTConstructor(Visitor_Recursive):
         in_stream = deque()
         out_stream = deque()
         exec(content, in_stream, out_stream)
-        self.tokens.append("".join(out_stream))
+        res = [line.rstrip("\n") + " " for line in out_stream]
+        self.substitutions.append("".join(res).rstrip("\n "))
