@@ -15,7 +15,6 @@ class TestPwd(unittest.TestCase):
 
     def test_pwd(self):
         self.app.exec([], self.in_stream, self.out_stream)
-        print(self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_out))
 
 
@@ -46,7 +45,7 @@ class TestLs(unittest.TestCase):
         self.out_stream = deque()
         self.sample_path = "tools"
         # results of "ls /comp0010/tools"
-        self.sample_out = ["coverage\n", "analysis\n", "test\n"]
+        self.sample_out = ["analysis\n", "coverage\n", "test\n"]
         # the number of results of "ls comp0010"
         self.sample_out_number = 12
 
@@ -540,6 +539,26 @@ class TestPipe(unittest.TestCase):
         pipe = Pipe(app1, app2)
 
         pipe.eval(self.in_stream, self.out_stream)
+        self.assertEqual(self.out_stream, deque(self.sample_out))
+
+class TestUnsafeDecorator(unittest.TestCase):
+    def setUp(self):
+        self.in_stream = deque()
+        self.out_stream = deque()
+
+        self.sample_out = ["wrong number of command line arguments"]
+        self.sample_out = [x + "\n" for x in self.sample_out]
+
+    def test_unsafe_decorato_with_no_error(self):
+        from commands import Call
+        call = Call('_echo', ['foo'])
+        call.eval(self.in_stream, self.out_stream)
+        self.assertEqual(self.out_stream, deque(['foo\n']))
+
+    def test_unsafe_decorator_with_error(self):
+        from commands import Call
+        call = Call('_ls', ['foo', 'bar'])
+        call.eval(self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_out))
 
 

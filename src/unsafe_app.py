@@ -9,4 +9,4 @@ class UnsafeDecorator(Application):
         try:
             self.__app.exec(args, in_stream, out_stream)
         except ValueError as error:
-            print(error)
+            out_stream.append(str(error) + "\n")
