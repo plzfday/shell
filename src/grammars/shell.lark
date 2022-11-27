@@ -11,13 +11,13 @@ redirection: "<" WS? argument -> l_dir
            | ">" WS? argument -> r_dir
 
 ?quoted: single_quoted | double_quoted | back_quoted
-single_quoted: "'" NON_NEWLINE_NON_SINGLE_QUOTE "'" -> quote
+single_quoted: "'" NON_NEWLINE_NON_SINGLE_QUOTE "'"
 back_quoted: "`" NON_NEWLINE_NON_BACKQUOTE  "`"
-double_quoted: "\"" (back_quoted | DOUBLE_QUOTE_CONTENT)* "\"" -> quote
+double_quoted: "\"" (back_quoted | DOUBLE_QUOTE_CONTENT)* "\""
 
 NON_KEYWORD: /[^\n'"`;|]+/
 
-UNQUOTED: /[^ \t'"\n;|<>]+/
+UNQUOTED: /[^ \t'"`\n;|<>]+/
 
 NON_NEWLINE_NON_SINGLE_QUOTE: /[^\n']+/
 NON_NEWLINE_NON_BACKQUOTE: /[^\n`]+/
