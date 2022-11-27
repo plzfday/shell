@@ -46,7 +46,7 @@ class TestLs(unittest.TestCase):
         self.out_stream = deque()
         self.sample_path = "tools"
         # results of "ls /comp0010/tools"
-        self.sample_out = ["coverage\n", "analysis\n", "test\n"]
+        self.sample_out = ["analysis\n", "coverage\n", "test\n"]
         # the number of results of "ls comp0010"
         self.sample_out_number = 12
 
