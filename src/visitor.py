@@ -23,13 +23,13 @@ class ASTConstructor(Visitor_Recursive):
         self.apps.popleft().eval(self.in_stream, self.out_stream)
 
     def seq(self, t):
-        app1 = self.apps.popleft()
-        app2 = self.apps.popleft()
+        app2 = self.apps.pop()
+        app1 = self.apps.pop()
         self.apps.append(Sequence(app1, app2))
 
     def pipe(self, t):
-        app1 = self.apps.popleft()
-        app2 = self.apps.popleft()
+        app2 = self.apps.pop()
+        app1 = self.apps.pop()
         self.apps.append(Pipe(app1, app2))
 
     def call(self, t):
@@ -38,8 +38,8 @@ class ASTConstructor(Visitor_Recursive):
 
         while self.tokens:
             args.append(self.tokens.popleft())
-
-        self.apps.append(Call(app, args))
+        self.apps.append(Call(app, args, self.output_redirection))
+        self.output_redirection = ''
 
     def r_dir(self, t):
         if self.output_redirection != "":

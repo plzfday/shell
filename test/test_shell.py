@@ -650,29 +650,25 @@ class TestCall(unittest.TestCase):
         self.in_stream = deque()
         self.out_stream = deque()
 
-        self.sample_in1 = ["hello", "world"]
-        self.sample_in1 = [x + "\n" for x in self.sample_in1]
-        self.sample_in2 = ["foo", "bar"]
-        self.sample_in2 = [x + "\n" for x in self.sample_in2]
-        self.sample_out = ["hello", "world", "foo", "bar"]
+        self.sample_out = ["foo"]
         self.sample_out = [x + "\n" for x in self.sample_out]
 
         filename = "call/"
         os.makedirs(os.path.dirname(filename), exist_ok=True)
 
-        with open("call/test_call1.txt", "w") as f:
-            for line in self.sample_in1:
-                f.write(line)
-
-        with open("call/test_call2.txt", "w") as f:
-            for line in self.sample_in2:
-                f.write(line)
-
     def test_call(self):
         from commands import Call
         call = Call('echo', ['foo'])
         call.eval(self.in_stream, self.out_stream)
-        self.assertEqual(self.out_stream, deque(['foo\n']))
+        self.assertEqual(self.out_stream, deque(self.sample_out))
+
+    def test_call_path(self):
+        from commands import Call
+        Call('echo', ['foo'],
+             'call/file.txt').eval(self.in_stream, self.out_stream)
+        output = Call('cat', ['call/file.txt'])
+        output.eval(self.in_stream, self.out_stream)
+        self.assertEqual(self.out_stream, deque(self.sample_out))
 
 
 class TestSequence(unittest.TestCase):

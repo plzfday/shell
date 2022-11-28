@@ -1,7 +1,6 @@
 import abc
 
 from apps import Application
-from glob import glob
 
 
 class Command(metaclass=abc.ABCMeta):
@@ -11,9 +10,8 @@ class Command(metaclass=abc.ABCMeta):
 
 
 class Call(Command):
-    def __init__(self, app, args):
+    def __init__(self, app, args, path=''):
         from unsafe_app import UnsafeDecorator
-
         unsafe_app = False
         if app[0] == "_":
             unsafe_app = True
@@ -24,9 +22,15 @@ class Call(Command):
             self.app = UnsafeDecorator(self.app)
 
         self.args = args
+        self.path = path
 
     def eval(self, in_stream, out_stream):
         self.app.exec(self.args, in_stream, out_stream)
+        if self.path != "":
+            for line in out_stream:
+                with open(self.path, "w") as f:
+                    f.write(line)
+            out_stream.clear()
 
 
 class Sequence(Command):

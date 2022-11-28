@@ -3,11 +3,11 @@ start: command
 pipe: call "|" call | pipe "|" call
 seq: command ";" command
 
-call: WS? (redirection WS)* argument (WS atom)* WS?
+call: _WS? (redirection _WS)* argument (_WS atom)* _WS?
 ?atom: redirection | argument
 argument: (quoted | UNQUOTED)+
-redirection: "<" WS? argument -> l_dir
-           | ">" WS? argument -> r_dir
+redirection: "<" _WS? argument -> l_dir
+           | ">" _WS? argument -> r_dir
 
 ?quoted: single_quoted | double_quoted | back_quoted
 single_quoted: "'" NON_NEWLINE_NON_SINGLE_QUOTE "'"
@@ -22,4 +22,4 @@ NON_NEWLINE_NON_SINGLE_QUOTE: /[^\n']+/
 NON_NEWLINE_NON_BACKQUOTE: /[^\n`]+/
 DOUBLE_QUOTE_CONTENT: /[^\n"`]+/
 
-%import common.WS_INLINE -> WS
+%import common.WS_INLINE -> _WS

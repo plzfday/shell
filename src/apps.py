@@ -152,7 +152,7 @@ class Grep(Application):
             pattern = args[0]
             while len(in_stream) != 0:
                 s = in_stream.popleft()
-                if pattern in s:
+                if re.search(pattern, s):
                     out_stream.append(s)
         elif len(args) >= 2:
             pattern = args[0]
@@ -310,7 +310,8 @@ class Uniq(Application):
 
         contents = []
         if len(args) == 0:
-            contents = list(in_stream)
+            for each in in_stream:
+                contents.append(each.rstrip('\n'))
         else:
             with open(args[-1], "r") as f:
                 for line in f:
