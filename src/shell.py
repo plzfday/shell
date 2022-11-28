@@ -23,9 +23,12 @@ if __name__ == "__main__":
         while len(out_stream) > 0:
             print(out_stream.popleft(), end="")
     else:
+        FILE_PATH = "/comp0010/history.txt"
         while True:
             print(os.getcwd() + "> ", end="")
             cmdline = input()
+            with open(FILE_PATH, 'a') as f:
+                f.write(cmdline + "\n")
             in_stream = deque()
             out_stream = deque()
             exec(cmdline, in_stream, out_stream)
