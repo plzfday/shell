@@ -270,7 +270,7 @@ class Find(Application):
         if dir == "":
             return []
         files = []
-        for file in os.listdir(dir):
+        for file in sorted(os.listdir(dir)):
             new_file = os.path.join(dir, file)
             if re.match(pattern, file):
                 files.append(new_file)

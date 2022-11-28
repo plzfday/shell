@@ -26,14 +26,7 @@ class Call(Command):
         self.args = args
 
     def eval(self, in_stream, out_stream):
-        tokens = []
-        for each in self.args:
-            globbing = sorted(glob(each))
-            if globbing:
-                tokens.extend(globbing)
-            else:
-                tokens.append(each)
-        self.app.exec(tokens, in_stream, out_stream)
+        self.app.exec(self.args, in_stream, out_stream)
 
 
 class Sequence(Command):
