@@ -1,6 +1,7 @@
 import os
 
 from collections import deque
+from glob import glob
 from lark import Token
 from lark.visitors import Visitor_Recursive
 from commands import Call, Pipe, Sequence
@@ -65,16 +66,20 @@ class ASTConstructor(Visitor_Recursive):
         s = []
         for child in t.children:
             if isinstance(child, Token):
-                s.append(str(child))
+                globbing = sorted(glob(str(child)))
+                if globbing:
+                    s.extend(" ".join(globbing))
+                else:
+                    s.append(str(child))
             elif child.data == "double_quoted":
                 s.append(self.tokens.pop())
             elif child.data == "back_quoted":
                 s.append(self.substitutions.popleft())
         if len(s) != 0:
-            self.tokens.append("".join(s))
+            self.tokens.extend("".join(s).split(' '))
 
     def single_quoted(self, t):
-        self.tokens.append((str(t.children[0]), True))
+        self.tokens.append(t.children[0])
 
     def double_quoted(self, t):
         s = []
