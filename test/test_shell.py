@@ -389,6 +389,32 @@ class TestUniq(unittest.TestCase):
                 str(error), "wrong number of command line arguments")
 
 
+class TestHistory(unittest.TestCase):
+    def setUp(self):
+        from src.apps import History
+
+        self.app = History()
+        self.in_stream = deque()
+        self.out_stream = deque()
+
+        self.sample_in = ["ls", "cd comp0010", "ls"]
+        self.sample_in = [x + "\n" for x in self.sample_in]
+        self.sample_out = ["1  ls\n",
+                           "2  cd comp0010\n", "3  ls\n"]
+
+        with open("history.txt", "w") as f:
+            for line in self.sample_in:
+                f.write(line)
+
+    def test_history(self):
+        self.app.exec([], self.in_stream, self.out_stream)
+        self.assertEqual(self.out_stream, deque(self.sample_out))
+
+    def test_history_option(self):
+        self.app.exec(["-c"], self.in_stream, self.out_stream)
+        self.assertEqual(self.out_stream, deque([]))
+
+
 class TestSort(unittest.TestCase):
     def setUp(self):
         from src.apps import Sort
