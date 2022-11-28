@@ -653,17 +653,11 @@ class TestCall(unittest.TestCase):
             for line in self.sample_in2:
                 f.write(line)
 
-    def test_call_no_globbing(self):
+    def test_call(self):
         from commands import Call
         call = Call('echo', ['foo'])
         call.eval(self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(['foo\n']))
-
-    def test_call_include_globbing(self):
-        from commands import Call
-        call = Call('cat', ['call/*.txt'])
-        call.eval(self.in_stream, self.out_stream)
-        self.assertEqual(self.out_stream, deque(self.sample_out))
 
 
 class TestSequence(unittest.TestCase):
@@ -717,9 +711,6 @@ class TestUnsafeDecorator(unittest.TestCase):
         self.in_stream = deque()
         self.out_stream = deque()
 
-        self.sample_out = ["wrong number of command line arguments"]
-        self.sample_out = [x + "\n" for x in self.sample_out]
-
     def test_unsafe_decorato_with_no_error(self):
         from commands import Call
         call = Call('_echo', ['foo'])
@@ -730,7 +721,7 @@ class TestUnsafeDecorator(unittest.TestCase):
         from commands import Call
         call = Call('_ls', ['foo', 'bar'])
         call.eval(self.in_stream, self.out_stream)
-        self.assertEqual(self.out_stream, deque(self.sample_out))
+        self.assertEqual(self.out_stream, deque([]))
 
 
 class TestApplication(unittest.TestCase):
