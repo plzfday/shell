@@ -88,6 +88,13 @@ class TestLs(unittest.TestCase):
             self.assertEqual(
                 str(error), "wrong number of command line arguments")
 
+    def test_ls_wrong_path(self):
+        try:
+            self.app.exec(["foo"], self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "path does not exist")
+
 
 class TestCat(unittest.TestCase):
     def setUp(self):
@@ -183,19 +190,23 @@ class TestHead(unittest.TestCase):
         self.app.exec(["-n", "4"], self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_stdout))
 
+    def test_head_no_args(self):
+        self.app.exec([], self.in_stream, self.out_stream)
+        self.assertEqual(self.out_stream, deque([]))
+
+    def test_head_incorrect_line_number(self):
+        try:
+            self.app.exec(["-n", "-"], self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "wrong flags")
+
     def test_head_incorrect_flag(self):
         try:
             self.app.exec(["-num", "4"], self.in_stream, self.out_stream)
         except ValueError as error:
             self.assertEqual(
                 str(error), "wrong flags")
-
-    def test_head_no_args(self):
-        try:
-            self.app.exec([], self.in_stream, self.out_stream)
-        except ValueError as error:
-            self.assertEqual(
-                str(error), "wrong number of command line arguments")
 
     def test_head_too_many_args(self):
         try:
@@ -258,19 +269,23 @@ class TestTail(unittest.TestCase):
         self.app.exec(["-n", "4"], self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_stdout))
 
+    def test_tail_no_args(self):
+        self.app.exec([], self.in_stream, self.out_stream)
+        self.assertEqual(self.out_stream, deque([]))
+
+    def test_tail_incorrect_line_number(self):
+        try:
+            self.app.exec(["-n", "-"], self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "wrong flags")
+
     def test_tail_incorrect_flag(self):
         try:
             self.app.exec(["-num", "4"], self.in_stream, self.out_stream)
         except ValueError as error:
             self.assertEqual(
                 str(error), "wrong flags")
-
-    def test_tail_no_args(self):
-        try:
-            self.app.exec([], self.in_stream, self.out_stream)
-        except ValueError as error:
-            self.assertEqual(
-                str(error), "wrong number of command line arguments")
 
     def test_tail_too_many_args(self):
         try:
@@ -711,17 +726,20 @@ class TestUnsafeDecorator(unittest.TestCase):
         self.in_stream = deque()
         self.out_stream = deque()
 
+        self.sample_out = ["wrong number of command line arguments"]
+        self.sample_out = [x + "\n" for x in self.sample_out]
+
     def test_unsafe_decorato_with_no_error(self):
         from commands import Call
         call = Call('_echo', ['foo'])
         call.eval(self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(['foo\n']))
 
-    def test_unsafe_decorator_with_error(self):
+    def test_unsafe_decorator_with_too_many_args(self):
         from commands import Call
         call = Call('_ls', ['foo', 'bar'])
         call.eval(self.in_stream, self.out_stream)
-        self.assertEqual(self.out_stream, deque([]))
+        self.assertEqual(self.out_stream, deque(self.sample_out))
 
 
 class TestApplication(unittest.TestCase):
@@ -765,5 +783,5 @@ class TestCommand(unittest.TestCase):
             self.assertEqual(str(error), '')
 
 
-if __name__ == "__main__":
-    unittest.main()
+# if __name__ == "__main__":
+#     unittest.main()
