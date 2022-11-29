@@ -49,6 +49,7 @@ def input(prompt: str):
         # backspace
         if c == "\x7f":
             s = s[:-1]
+            print("\b \b", end="", flush=True)
         else:
             s += c
 
@@ -78,4 +79,4 @@ def input(prompt: str):
                 sep += len(line) + 1
         # Clear the current line and print out the prompt
         # followed by thecurrent command line
-        print(f"\033[2K\033[1G{prompt}{''.join(cmdline)}", end="", flush=True)
+        print(f"\r{prompt}{''.join(cmdline)}", end="", flush=True)
