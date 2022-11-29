@@ -39,7 +39,7 @@ class ASTConstructor(Visitor_Recursive):
         while self.tokens:
             args.append(self.tokens.popleft())
         self.apps.append(Call(app, args, self.output_redirection))
-        self.output_redirection = ''
+        self.output_redirection = ""
 
     def r_dir(self, t):
         if self.output_redirection != "":

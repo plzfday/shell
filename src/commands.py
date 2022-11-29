@@ -10,7 +10,7 @@ class Command(metaclass=abc.ABCMeta):
 
 
 class Call(Command):
-    def __init__(self, app, args, path=''):
+    def __init__(self, app, args, path=""):
         from unsafe_app import UnsafeDecorator
         unsafe_app = False
         if app[0] == "_":
@@ -26,11 +26,10 @@ class Call(Command):
 
     def eval(self, in_stream, out_stream):
         self.app.exec(self.args, in_stream, out_stream)
-        if self.path != "":
-            for line in out_stream:
-                with open(self.path, "w") as f:
-                    f.write(line)
-            out_stream.clear()
+        if not self.path == "":
+            with open(self.path, "w") as f:
+                while not len(out_stream) == 0:
+                    f.write(out_stream.popleft())
 
 
 class Sequence(Command):
@@ -39,8 +38,14 @@ class Sequence(Command):
         self.app2 = app2
 
     def eval(self, in_stream, out_stream):
-        self.app1.eval(in_stream, out_stream)
-        self.app2.eval(in_stream, out_stream)
+        # Each <Command> seprated into two branches
+        # so each <Command> need a copy of the same out_stream
+        # then merged two out_streams together
+        out_stream1 = out_stream.copy()
+        out_stream2 = out_stream.copy()
+        self.app1.eval(in_stream, out_stream1)
+        self.app2.eval(in_stream, out_stream2)
+        out_stream.extend(out_stream1 + out_stream2)
 
 
 class Pipe(Command):
