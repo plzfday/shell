@@ -1,6 +1,6 @@
 import abc
 
-from apps import Application
+from app import app_by_name
 
 
 class Command(metaclass=abc.ABCMeta):
@@ -17,7 +17,7 @@ class Call(Command):
             unsafe_app = True
             app = app[1:]
 
-        self.app = Application.by_name(app)
+        self.app = app_by_name(app)
         if unsafe_app:
             self.app = UnsafeDecorator(self.app)
 

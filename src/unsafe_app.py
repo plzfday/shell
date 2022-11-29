@@ -1,4 +1,4 @@
-from apps import Application
+from applications.application import Application
 
 
 class UnsafeDecorator(Application):

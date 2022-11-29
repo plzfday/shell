@@ -1,5 +1,6 @@
 import sys
 import os
+import advinput
 
 from collections import deque
 from manager import ShellManager
@@ -24,8 +25,9 @@ if __name__ == "__main__":
             print(out_stream.popleft(), end="")
     else:
         while True:
-            print(os.getcwd() + "> ", end="")
-            cmdline = input()
+            cmdline = advinput.input(os.getcwd() + "> ")
+            if cmdline is None:
+                break
             in_stream = deque()
             out_stream = deque()
             exec(cmdline, in_stream, out_stream)
