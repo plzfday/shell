@@ -54,9 +54,12 @@ class Ls(Application):
         else:
             ls_dir = args[0]
 
-        for f in sorted(os.listdir(ls_dir)):
-            if not f.startswith("."):
-                out_stream.append(f + "\n")
+        if os.path.exists(ls_dir):
+            for f in sorted(os.listdir(ls_dir)):
+                if not f.startswith("."):
+                    out_stream.append(f + "\n")
+        else:
+            raise ValueError("path does not exist")
 
 
 class Cat(Application):
@@ -85,10 +88,13 @@ class Head(Application):
 
         num_lines = 10
 
-        if args_num >= 2 and args[0] == "-n":
-            try:
-                num_lines = int(args[1])
-            except ValueError:
+        if args_num >= 2:
+            if args[0] == "-n":
+                try:
+                    num_lines = int(args[1])
+                except ValueError:
+                    raise ValueError("wrong flags")
+            else:
                 raise ValueError("wrong flags")
 
             args_num -= 2
@@ -113,10 +119,13 @@ class Tail(Application):
 
         num_lines = 10
 
-        if args_num >= 2 and args[0] == "-n":
-            try:
-                num_lines = int(args[1])
-            except ValueError:
+        if args_num >= 2:
+            if args[0] == "-n":
+                try:
+                    num_lines = int(args[1])
+                except ValueError:
+                    raise ValueError("wrong flags")
+            else:
                 raise ValueError("wrong flags")
 
             args_num -= 2
@@ -143,7 +152,7 @@ class Grep(Application):
             pattern = args[0]
             while len(in_stream) != 0:
                 s = in_stream.popleft()
-                if pattern in s:
+                if re.search(pattern, s):
                     out_stream.append(s)
         elif len(args) >= 2:
             pattern = args[0]
@@ -301,7 +310,8 @@ class Uniq(Application):
 
         contents = []
         if len(args) == 0:
-            contents = list(in_stream)
+            for each in in_stream:
+                contents.append(each.rstrip('\n'))
         else:
             with open(args[-1], "r") as f:
                 for line in f:
