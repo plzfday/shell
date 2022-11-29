@@ -38,9 +38,6 @@ class Sequence(Command):
         self.app2 = app2
 
     def eval(self, in_stream, out_stream):
-        # Each <Command> seprated into two branches
-        # so each <Command> need a copy of the same out_stream
-        # then merged two out_streams together
         out_stream1 = out_stream.copy()
         out_stream2 = out_stream.copy()
         self.app1.eval(in_stream, out_stream1)

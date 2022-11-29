@@ -23,12 +23,6 @@ class ASTConstructor(Visitor_Recursive):
         self.apps.popleft().eval(self.in_stream, self.out_stream)
 
     def seq(self, t):
-        # At the case of test_pipe_uniq
-        # The self.apps becomes at this point:
-        # [<commands.Sequence object at 0xffff84de3540>, <commands.Call object at 0xffff84de2940>, <commands.Pipe object at 0xffff84de2340>]
-        # Since this is a bottom up process
-        # we need to pop from the end of the queue
-        # So the sequence can be processed last
         app2 = self.apps.pop()
         app1 = self.apps.pop()
         self.apps.append(Sequence(app1, app2))
