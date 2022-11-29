@@ -1,5 +1,7 @@
 import os
 
+from applications.application import Application
+
 
 class History(Application):
     def exec(self, args, in_stream, out_stream):

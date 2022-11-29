@@ -1,15 +1,13 @@
 import os
-
 import unittest
 
 from unittest.mock import patch
-
 from collections import deque
 
 
 class TestPwd(unittest.TestCase):
     def setUp(self):
-        from src.apps import Pwd
+        from applications.pwd import Pwd
 
         self.app = Pwd()
         self.in_stream = deque()
@@ -30,7 +28,7 @@ class TestPwd(unittest.TestCase):
 
 class TestCd(unittest.TestCase):
     def setUp(self):
-        from src.apps import Cd
+        from applications.cd import Cd
 
         self.app = Cd()
         self.in_stream = deque()
@@ -62,7 +60,7 @@ class TestCd(unittest.TestCase):
 
 class TestLs(unittest.TestCase):
     def setUp(self):
-        from src.apps import Ls
+        from applications.ls import Ls
 
         self.app = Ls()
         self.in_stream = deque()
@@ -88,10 +86,17 @@ class TestLs(unittest.TestCase):
             self.assertEqual(
                 str(error), "wrong number of command line arguments")
 
+    def test_ls_wrong_path(self):
+        try:
+            self.app.exec(["foo"], self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "path does not exist")
+
 
 class TestCat(unittest.TestCase):
     def setUp(self):
-        from src.apps import Cat
+        from applications.cat import Cat
 
         self.app = Cat()
         self.in_stream = deque()
@@ -117,7 +122,7 @@ class TestCat(unittest.TestCase):
 
 class TestEcho(unittest.TestCase):
     def setUp(self):
-        from src.apps import Echo
+        from applications.echo import Echo
 
         self.app = Echo()
         self.in_stream = deque()
@@ -132,7 +137,7 @@ class TestEcho(unittest.TestCase):
 
 class TestHead(unittest.TestCase):
     def setUp(self):
-        from src.apps import Head
+        from applications.head import Head
 
         self.app = Head()
         self.in_stream = deque()
@@ -183,19 +188,23 @@ class TestHead(unittest.TestCase):
         self.app.exec(["-n", "4"], self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_stdout))
 
+    def test_head_no_args(self):
+        self.app.exec([], self.in_stream, self.out_stream)
+        self.assertEqual(self.out_stream, deque([]))
+
+    def test_head_incorrect_line_number(self):
+        try:
+            self.app.exec(["-n", "-"], self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "wrong flags")
+
     def test_head_incorrect_flag(self):
         try:
             self.app.exec(["-num", "4"], self.in_stream, self.out_stream)
         except ValueError as error:
             self.assertEqual(
                 str(error), "wrong flags")
-
-    def test_head_no_args(self):
-        try:
-            self.app.exec([], self.in_stream, self.out_stream)
-        except ValueError as error:
-            self.assertEqual(
-                str(error), "wrong number of command line arguments")
 
     def test_head_too_many_args(self):
         try:
@@ -208,7 +217,7 @@ class TestHead(unittest.TestCase):
 
 class TestTail(unittest.TestCase):
     def setUp(self):
-        from src.apps import Tail
+        from applications.tail import Tail
 
         self.app = Tail()
         self.in_stream = deque()
@@ -258,19 +267,23 @@ class TestTail(unittest.TestCase):
         self.app.exec(["-n", "4"], self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_stdout))
 
+    def test_tail_no_args(self):
+        self.app.exec([], self.in_stream, self.out_stream)
+        self.assertEqual(self.out_stream, deque([]))
+
+    def test_tail_incorrect_line_number(self):
+        try:
+            self.app.exec(["-n", "-"], self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "wrong flags")
+
     def test_tail_incorrect_flag(self):
         try:
             self.app.exec(["-num", "4"], self.in_stream, self.out_stream)
         except ValueError as error:
             self.assertEqual(
                 str(error), "wrong flags")
-
-    def test_tail_no_args(self):
-        try:
-            self.app.exec([], self.in_stream, self.out_stream)
-        except ValueError as error:
-            self.assertEqual(
-                str(error), "wrong number of command line arguments")
 
     def test_tail_too_many_args(self):
         try:
@@ -283,7 +296,7 @@ class TestTail(unittest.TestCase):
 
 class TestGrep(unittest.TestCase):
     def setUp(self):
-        from src.apps import Grep
+        from applications.grep import Grep
 
         self.app = Grep()
         self.in_stream = deque()
@@ -339,7 +352,7 @@ class TestGrep(unittest.TestCase):
 
 class TestUniq(unittest.TestCase):
     def setUp(self):
-        from src.apps import Uniq
+        from applications.uniq import Uniq
 
         self.app = Uniq()
         self.in_stream = deque()
@@ -417,7 +430,7 @@ class TestHistory(unittest.TestCase):
 
 class TestSort(unittest.TestCase):
     def setUp(self):
-        from src.apps import Sort
+        from applications.sort import Sort
 
         self.app = Sort()
         self.in_stream = deque()
@@ -458,7 +471,7 @@ class TestSort(unittest.TestCase):
 
 class TestFind(unittest.TestCase):
     def setUp(self):
-        from src.apps import Find
+        from applications.find import Find
 
         self.app = Find()
         self.in_stream = deque()
@@ -497,9 +510,10 @@ class TestFind(unittest.TestCase):
         self.assertEqual(self.out_stream, deque(["./find/test_find.txt\n"]))
 
     def test_find_name_pattern_front_back(self):
-        self.app.exec(["-name", "*find*"], self.in_stream, self.out_stream)
-        self.assertEqual(self.out_stream, deque(
-            ["./find\n", "./find/test_find.txt\n"]))
+        self.app.exec(["find", "-name", "*find*"],
+                      self.in_stream,
+                      self.out_stream)
+        self.assertEqual(self.out_stream, deque(["find/test_find.txt\n"]))
 
     def test_find_dir_name_pattern(self):
         self.app.exec(["find", "-name", "*.txt"],
@@ -542,7 +556,7 @@ class TestFind(unittest.TestCase):
 
 class TestCut(unittest.TestCase):
     def setUp(self):
-        from src.apps import Cut
+        from applications.cut import Cut
 
         self.app = Cut()
         self.in_stream = deque()
@@ -661,34 +675,24 @@ class TestCall(unittest.TestCase):
         self.in_stream = deque()
         self.out_stream = deque()
 
-        self.sample_in1 = ["hello", "world"]
-        self.sample_in1 = [x + "\n" for x in self.sample_in1]
-        self.sample_in2 = ["foo", "bar"]
-        self.sample_in2 = [x + "\n" for x in self.sample_in2]
-        self.sample_out = ["hello", "world", "foo", "bar"]
+        self.sample_out = ["foo"]
         self.sample_out = [x + "\n" for x in self.sample_out]
 
         filename = "call/"
         os.makedirs(os.path.dirname(filename), exist_ok=True)
 
-        with open("call/test_call1.txt", "w") as f:
-            for line in self.sample_in1:
-                f.write(line)
-
-        with open("call/test_call2.txt", "w") as f:
-            for line in self.sample_in2:
-                f.write(line)
-
-    def test_call_no_globbing(self):
+    def test_call(self):
         from commands import Call
         call = Call('echo', ['foo'])
         call.eval(self.in_stream, self.out_stream)
-        self.assertEqual(self.out_stream, deque(['foo\n']))
+        self.assertEqual(self.out_stream, deque(self.sample_out))
 
-    def test_call_include_globbing(self):
+    def test_call_path(self):
         from commands import Call
-        call = Call('cat', ['call/*.txt'])
-        call.eval(self.in_stream, self.out_stream)
+        Call('echo', ['foo'],
+             'call/file.txt').eval(self.in_stream, self.out_stream)
+        output = Call('cat', ['call/file.txt'])
+        output.eval(self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_out))
 
 
@@ -752,7 +756,7 @@ class TestUnsafeDecorator(unittest.TestCase):
         call.eval(self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(['foo\n']))
 
-    def test_unsafe_decorator_with_error(self):
+    def test_unsafe_decorator_with_too_many_args(self):
         from commands import Call
         call = Call('_ls', ['foo', 'bar'])
         call.eval(self.in_stream, self.out_stream)
@@ -765,17 +769,17 @@ class TestApplication(unittest.TestCase):
         self.out_stream = deque()
 
     def test_application_unknown_app(self):
-        from apps import Application
+        from app import app_by_name
         try:
-            Application.by_name("foo")
+            app_by_name("foo")
         except ValueError as error:
             self.assertEqual(str(error), "Unknown application: foo")
 
-    from apps import Application
+    from applications.application import Application
 
     @patch.multiple(Application, __abstractmethods__=set())
     def test_application_not_implemented(self):
-        from apps import Application
+        from applications.application import Application
         app = Application()
         try:
             app.exec([], self.in_stream, self.out_stream)
@@ -800,5 +804,5 @@ class TestCommand(unittest.TestCase):
             self.assertEqual(str(error), '')
 
 
-if __name__ == "__main__":
-    unittest.main()
+# if __name__ == "__main__":
+#     unittest.main()
