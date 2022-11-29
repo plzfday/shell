@@ -49,16 +49,17 @@ def input(prompt: str):
             print(flush=True)
             return s
 
-        if not s:
-            if c == "\x38":
-                s = history.arrow_up()
-            elif c == "\x40":
-                s = history.arrow_down()
-        else:
+        if not (s and c in ["\x38", "\x40"]):
             # backspace
             if c == "\x7f":
                 s = s[:-1]
                 print("\b \b", end="", flush=True)
+            elif not s and c == "\x38":
+                print("Arrow Up")
+                s = history.arrow_up()
+            elif not s and c == "\x40":
+                print("Arrow Down")
+                s = history.arrow_down()
             else:
                 s += c
 
