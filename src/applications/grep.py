@@ -9,7 +9,7 @@ class Grep(Application):
             pattern = args[0]
             while len(in_stream) != 0:
                 s = in_stream.popleft()
-                if pattern in s:
+                if re.search(pattern, s):
                     out_stream.append(s)
         elif len(args) >= 2:
             pattern = args[0]

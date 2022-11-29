@@ -9,10 +9,13 @@ class Tail(Application):
 
         num_lines = 10
 
-        if args_num >= 2 and args[0] == "-n":
-            try:
-                num_lines = int(args[1])
-            except ValueError:
+        if args_num >= 2:
+            if args[0] == "-n":
+                try:
+                    num_lines = int(args[1])
+                except ValueError:
+                    raise ValueError("wrong flags")
+            else:
                 raise ValueError("wrong flags")
 
             args_num -= 2

@@ -13,7 +13,8 @@ class Uniq(Application):
 
         contents = []
         if len(args) == 0:
-            contents = list(in_stream)
+            for each in in_stream:
+                contents.append(each.rstrip('\n'))
         else:
             with open(args[-1], "r") as f:
                 for line in f:
