@@ -1,15 +1,13 @@
 import os
-
 import unittest
 
 from unittest.mock import patch
-
 from collections import deque
 
 
 class TestPwd(unittest.TestCase):
     def setUp(self):
-        from src.apps import Pwd
+        from applications.pwd import Pwd
 
         self.app = Pwd()
         self.in_stream = deque()
@@ -30,7 +28,7 @@ class TestPwd(unittest.TestCase):
 
 class TestCd(unittest.TestCase):
     def setUp(self):
-        from src.apps import Cd
+        from applications.cd import Cd
 
         self.app = Cd()
         self.in_stream = deque()
@@ -62,7 +60,7 @@ class TestCd(unittest.TestCase):
 
 class TestLs(unittest.TestCase):
     def setUp(self):
-        from src.apps import Ls
+        from applications.ls import Ls
 
         self.app = Ls()
         self.in_stream = deque()
@@ -91,7 +89,7 @@ class TestLs(unittest.TestCase):
 
 class TestCat(unittest.TestCase):
     def setUp(self):
-        from src.apps import Cat
+        from applications.cat import Cat
 
         self.app = Cat()
         self.in_stream = deque()
@@ -117,7 +115,7 @@ class TestCat(unittest.TestCase):
 
 class TestEcho(unittest.TestCase):
     def setUp(self):
-        from src.apps import Echo
+        from applications.echo import Echo
 
         self.app = Echo()
         self.in_stream = deque()
@@ -132,7 +130,7 @@ class TestEcho(unittest.TestCase):
 
 class TestHead(unittest.TestCase):
     def setUp(self):
-        from src.apps import Head
+        from applications.head import Head
 
         self.app = Head()
         self.in_stream = deque()
@@ -208,7 +206,7 @@ class TestHead(unittest.TestCase):
 
 class TestTail(unittest.TestCase):
     def setUp(self):
-        from src.apps import Tail
+        from applications.tail import Tail
 
         self.app = Tail()
         self.in_stream = deque()
@@ -283,7 +281,7 @@ class TestTail(unittest.TestCase):
 
 class TestGrep(unittest.TestCase):
     def setUp(self):
-        from src.apps import Grep
+        from applications.grep import Grep
 
         self.app = Grep()
         self.in_stream = deque()
@@ -339,7 +337,7 @@ class TestGrep(unittest.TestCase):
 
 class TestUniq(unittest.TestCase):
     def setUp(self):
-        from src.apps import Uniq
+        from applications.uniq import Uniq
 
         self.app = Uniq()
         self.in_stream = deque()
@@ -391,7 +389,7 @@ class TestUniq(unittest.TestCase):
 
 class TestSort(unittest.TestCase):
     def setUp(self):
-        from src.apps import Sort
+        from applications.sort import Sort
 
         self.app = Sort()
         self.in_stream = deque()
@@ -432,7 +430,7 @@ class TestSort(unittest.TestCase):
 
 class TestFind(unittest.TestCase):
     def setUp(self):
-        from src.apps import Find
+        from applications.find import Find
 
         self.app = Find()
         self.in_stream = deque()
@@ -516,7 +514,7 @@ class TestFind(unittest.TestCase):
 
 class TestCut(unittest.TestCase):
     def setUp(self):
-        from src.apps import Cut
+        from applications.cut import Cut
 
         self.app = Cut()
         self.in_stream = deque()
@@ -739,17 +737,17 @@ class TestApplication(unittest.TestCase):
         self.out_stream = deque()
 
     def test_application_unknown_app(self):
-        from apps import Application
+        from app import app_by_name
         try:
-            Application.by_name("foo")
+            app_by_name("foo")
         except ValueError as error:
             self.assertEqual(str(error), "Unknown application: foo")
 
-    from apps import Application
+    from applications.application import Application
 
     @patch.multiple(Application, __abstractmethods__=set())
     def test_application_not_implemented(self):
-        from apps import Application
+        from applications.application import Application
         app = Application()
         try:
             app.exec([], self.in_stream, self.out_stream)
