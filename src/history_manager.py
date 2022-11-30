@@ -19,7 +19,7 @@ class HistoryManager:
         return self.history.saved[self.current]
 
     def arrow_down(self) -> str:
-        if self.len_history == 0:
+        if self.len_history == 0 or self.current + 1 == self.len_history:
             return ""
         self.current = min(self.len_history - 1, self.current + 1)
         return self.history.saved[self.current]
