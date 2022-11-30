@@ -2,6 +2,15 @@ from applications.history import History
 
 
 class HistoryManager:
+    """ Used in user input prompt to retrieve history
+
+    This is a singleton class but initialised every time 
+    it is called to update the history.
+
+    It has dependency to Histrory class (app), but it is better to
+    add arrow_up() and arrow_down() to this so that History can focus on
+    only updating history.
+    """
     def __new__(cls):
         if not hasattr(cls, "_instance"):
             cls._instance = super(HistoryManager, cls).__new__(cls)

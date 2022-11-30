@@ -3,6 +3,11 @@ from exceptions import WrongNumberOfArgumentsError, InvalidFlagError
 
 
 class Tail(Application):
+    """ Prints the last N lines
+
+    Options: -n num - number of lines to print (default 10)
+    """
+
     def exec(self, args, in_stream, out_stream):
         args_num = len(args)
         if args_num > 3:

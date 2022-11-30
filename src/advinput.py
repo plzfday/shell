@@ -24,6 +24,10 @@ def getkey_unix():
 
 
 def getkey_factory():
+    """ Windows and Unix systems have different ways to get keyboard input 
+
+    Thus, we need a factory method to return the correct function for OS.
+    """
     import platform
     if platform.system() == "Windows":
         return getkey_windows
@@ -32,6 +36,12 @@ def getkey_factory():
 
 
 def input(prompt: str):
+    """ Catches the keyboard input and prints the line
+
+    This function adapts MVC pattern. Because the string printed out for user
+    is coloured which means it includes substrings like \[033, the actual
+    string and the viewed string are treated differently.
+    """
     getkey = getkey_factory()
     history = HistoryManager()
 
@@ -53,6 +63,8 @@ def input(prompt: str):
         if c == "\x7f":
             s = s[:-1]
             print("\b \b", end="", flush=True)
+        # arrow up or arrow down
+        # Since it takes 3 keys in a row, getkey() is called for 3 times
         elif c == "\x1b":
             c = getkey()
             if c == "\x5b":
@@ -61,9 +73,11 @@ def input(prompt: str):
                     s = history.arrow_up()
                 elif c == "\x42":
                     s = history.arrow_down()
+        # backspace
         elif c > "\x1f":
             s += c
 
+        # View part
         cmdline = []
         sep = 0
         # This regex separates CMD into SUBCMD by ';' and '|'

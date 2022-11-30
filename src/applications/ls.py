@@ -5,6 +5,8 @@ from exceptions import WrongNumberOfArgumentsError, InvalidPathError
 
 
 class Ls(Application):
+    """ Lists the content of a directory """
+
     def exec(self, args, in_stream, out_stream):
         if len(args) == 0:
             ls_dir = os.getcwd()

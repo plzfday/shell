@@ -5,6 +5,8 @@ from exceptions import WrongNumberOfArgumentsError
 
 
 class Pwd(Application):
+    """ Outputs the current working directory """
+
     def exec(self, args, in_stream, out_stream):
         if len(args) > 0:
             raise WrongNumberOfArgumentsError

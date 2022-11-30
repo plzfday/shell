@@ -34,6 +34,7 @@ APP = {
 
 
 def app_by_name(name):
+    """ Returns the application class by name (factory method) """
     if name not in APP:
         raise UnknownApplicationError(name)
 

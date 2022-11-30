@@ -4,6 +4,13 @@ from exceptions import WrongNumberOfArgumentsError, \
 
 
 class Cut(Application):
+    """ Cuts out sections from each line
+
+    Options: -b RANGE - cut out bytes
+
+    RANGE: n0-n1 | n0- | -n1 | n | RANGE,RANGE
+    """
+
     def exec(self, args, in_stream, out_stream):
         # cut -b 1 requirements.txt
         # args: ['-b', '1-,3-5', 'requirements.txt']
@@ -53,6 +60,7 @@ class Cut(Application):
         return intervals
 
     def __clean_up_intervals(self, intervals):
+        """ Merge overlapping intervals """
         intervals.sort()
 
         merged = []

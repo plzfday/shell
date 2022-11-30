@@ -5,6 +5,11 @@ from exceptions import WrongNumberOfArgumentsError
 
 
 class Grep(Application):
+    """ Searches for lines containing a match to the specified pattern
+
+    Usage: grep PATTERN [FILE] - PATTERN is a regular expression
+    """
+
     def exec(self, args, in_stream, out_stream):
         if len(args) == 1:
             pattern = args[0]

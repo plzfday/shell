@@ -3,6 +3,11 @@ from exceptions import WrongNumberOfArgumentsError
 
 
 class Uniq(Application):
+    """ Detects and deletes adjacent duplicate lines
+
+    Options: -i - case insensitive
+    """
+
     def exec(self, args, in_stream, out_stream):
         if len(args) > 2:
             raise WrongNumberOfArgumentsError

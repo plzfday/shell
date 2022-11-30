@@ -5,6 +5,8 @@ from visitor import ASTConstructor
 
 
 class ShellManager:
+    """ Start point of the shell """
+
     def __init__(self, in_stream, out_stream):
         self.in_stream = in_stream
         self.out_stream = out_stream

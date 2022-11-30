@@ -4,6 +4,11 @@ from exceptions import InvalidFlagError, WrongNumberOfArgumentsError
 
 
 class History(Application):
+    """ Prints the preceding commands 
+
+    Options: -c - clear the history
+    """
+
     def __new__(cls):
         if not hasattr(cls, "_instance"):
             cls._instance = super(History, cls).__new__(cls)

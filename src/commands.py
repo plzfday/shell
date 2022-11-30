@@ -12,6 +12,8 @@ class Command(metaclass=abc.ABCMeta):
 class Call(Command):
     def __init__(self, app, args, path=""):
         from unsafe_app import UnsafeDecorator
+
+        # Detect unsafe applications
         unsafe_app = False
         if app[0] == "_":
             unsafe_app = True
@@ -26,9 +28,9 @@ class Call(Command):
 
     def eval(self, in_stream, out_stream):
         self.app.exec(self.args, in_stream, out_stream)
-        if not self.path == "":
+        if self.path != "":
             with open(self.path, "w") as f:
-                while not len(out_stream) == 0:
+                while len(out_stream) != 0:
                     f.write(out_stream.popleft())
 
 
