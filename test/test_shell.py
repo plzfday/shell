@@ -421,11 +421,36 @@ class TestHistory(unittest.TestCase):
 
         self.app = History()
 
-    def test_history(self):
+    def test_history_1_default(self):
         self.app.exec([], self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_out))
 
-    def test_history_option(self):
+    def test_history_2_too_many_args(self):
+        try:
+            self.app.exec(["-c", "test"], self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "wrong number of command line arguments")
+
+    def test_history_3_invalid_option(self):
+        try:
+            self.app.exec(["-d"], self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(str(error), "invalid option")
+
+    def test_history_4_add(self):
+        for i in range(101):
+            self.app.add(str(i))
+
+        self.assertEqual(self.app.saved[0], "1")
+        self.assertEqual(self.app.saved[-1], "100")
+
+    def test_history_5_save(self):
+        self.app.save()
+        with open("/comp0010/history.txt", "r") as f:
+            self.assertEqual(f.readlines(), [f"{i}\n" for i in range(1, 101)])
+
+    def test_history_6_valid_option(self):
         self.app.exec(["-c"], self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque([]))
 
@@ -685,15 +710,15 @@ class TestCall(unittest.TestCase):
 
     def test_call(self):
         from commands import Call
-        call = Call('echo', ['foo'])
+        call = Call("echo", ["foo"])
         call.eval(self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_out))
 
     def test_call_path(self):
         from commands import Call
-        Call('echo', ['foo'],
-             'call/file.txt').eval(self.in_stream, self.out_stream)
-        output = Call('cat', ['call/file.txt'])
+        Call("echo", ["foo"],
+             "call/file.txt").eval(self.in_stream, self.out_stream)
+        output = Call("cat", ["call/file.txt"])
         output.eval(self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_out))
 
@@ -713,8 +738,8 @@ class TestSequence(unittest.TestCase):
 
     def test_sequence(self):
         from commands import Call, Sequence
-        app1 = Call('echo', ['foo'])
-        app2 = Call('cat', ["test/test_sequence.txt"])
+        app1 = Call("echo", ["foo"])
+        app2 = Call("cat", ["test/test_sequence.txt"])
         seq = Sequence(app1, app2)
 
         seq.eval(self.in_stream, self.out_stream)
@@ -736,8 +761,8 @@ class TestPipe(unittest.TestCase):
 
     def test_pipe(self):
         from commands import Call, Pipe
-        app1 = Call('cat', ["test/test_pipe.txt"])
-        app2 = Call('grep', ["foo"])
+        app1 = Call("cat", ["test/test_pipe.txt"])
+        app2 = Call("grep", ["foo"])
         pipe = Pipe(app1, app2)
 
         pipe.eval(self.in_stream, self.out_stream)
@@ -754,13 +779,13 @@ class TestUnsafeDecorator(unittest.TestCase):
 
     def test_unsafe_decorato_with_no_error(self):
         from commands import Call
-        call = Call('_echo', ['foo'])
+        call = Call("_echo", ["foo"])
         call.eval(self.in_stream, self.out_stream)
-        self.assertEqual(self.out_stream, deque(['foo\n']))
+        self.assertEqual(self.out_stream, deque(["foo\n"]))
 
     def test_unsafe_decorator_with_too_many_args(self):
         from commands import Call
-        call = Call('_ls', ['foo', 'bar'])
+        call = Call("_ls", ["foo", "bar"])
         call.eval(self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_out))
 
@@ -786,7 +811,7 @@ class TestApplication(unittest.TestCase):
         try:
             app.exec([], self.in_stream, self.out_stream)
         except NotImplementedError as error:
-            self.assertEqual(str(error), '')
+            self.assertEqual(str(error), "")
 
 
 class TestCommand(unittest.TestCase):
@@ -803,8 +828,4 @@ class TestCommand(unittest.TestCase):
         try:
             command.eval(self.in_stream, self.out_stream)
         except NotImplementedError as error:
-            self.assertEqual(str(error), '')
-
-
-# if __name__ == "__main__":
-#     unittest.main()
+            self.assertEqual(str(error), "")

@@ -25,7 +25,7 @@ def getkey_unix():
 
 def getkey_factory():
     import platform
-    if platform.system() == 'Windows':
+    if platform.system() == "Windows":
         return getkey_windows
     else:
         return getkey_unix

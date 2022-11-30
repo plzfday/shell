@@ -38,4 +38,4 @@ class History(Application):
     def save(self):
         with open(self.FILE_PATH, "w") as f:
             for cmdline in self.saved:
-                f.write(cmdline)
+                f.write(cmdline + "\n")
