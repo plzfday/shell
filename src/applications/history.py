@@ -1,5 +1,6 @@
 from applications.application import Application
 from collections import deque
+from exceptions import InvalidFlagError, WrongNumberOfArgumentsError
 
 
 class History(Application):
@@ -16,14 +17,14 @@ class History(Application):
 
     def exec(self, args, in_stream, out_stream):
         if len(args) > 1:
-            raise ValueError("wrong number of command line arguments")
+            raise WrongNumberOfArgumentsError
         elif len(args) == 0:
             for i, item in enumerate(self.saved):
                 out_stream.append(f"{i + 1}  {item}\n")
         elif len(args) == 1 and args[0] == "-c":
             self.saved.clear()
         else:
-            raise ValueError("invalid option")
+            raise InvalidFlagError
 
     def add(self, cmdline):
         self.saved.append(cmdline)

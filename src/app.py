@@ -13,7 +13,7 @@ from applications.cd import Cd
 from applications.history import History
 from applications.wc import Wc
 
-from exceptions import UnknownApplciationError
+from exceptions import UnknownApplicationError
 
 APP = {
     "pwd": Pwd,
@@ -35,6 +35,6 @@ APP = {
 
 def app_by_name(name):
     if name not in APP:
-        raise UnknownApplciationError(name)
+        raise UnknownApplicationError(name)
 
     return APP[name]()

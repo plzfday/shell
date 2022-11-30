@@ -28,7 +28,7 @@ class PatternNotFoundError(Exception):
         super().__init__("pattern cannot be found")
 
 
-class UnknownApplciationError(Exception):
+class UnknownApplicationError(Exception):
     def __init__(self, name):
         super().__init__(f"Unknown application: {name}")
 
