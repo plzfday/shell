@@ -33,14 +33,14 @@ class Wc(Application):
             total[2] += characters
 
         if flag == '-l':
-            out_stream.append("{: >4}".format(str(total[0])+'\n'))
+            out_stream.append("{: >4}".format(str(total[0])+"\n"))
         elif flag == '-w':
-            out_stream.append("{: >4}".format(str(total[1])+'\n'))
+            out_stream.append("{: >4}".format(str(total[1])+"\n"))
         elif flag == "-m":
-            out_stream.append("{: >4}".format(str(total[2])+'\n'))
+            out_stream.append("{: >4}".format(str(total[2])+"\n"))
         elif flag == "":
             out_stream.append("{: >4} {: >4} {: >4}".format(
-                str(total[0]), str(total[1]), str(total[2]))+'\n')
+                str(total[0]), str(total[1]), str(total[2]))+"\n")
         else:
             raise InvalidFlagError
 

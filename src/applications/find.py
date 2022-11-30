@@ -8,33 +8,38 @@ from exceptions import WrongNumberOfArgumentsError, \
 
 class Find(Application):
     def exec(self, args, in_stream, out_stream):
+        flag = ""
+        pattern = ""
+        if len(args) == 1 and len(args[0]) > 0 and args[0][0] == "-":
+            flag = args.pop()
+        elif len(args) == 2 and len(args[-1]) > 0 and args[-1][0] == "-":
+            flag = args.pop()
+        elif len(args) >= 2 and len(args[-2]) > 0 and args[-2][0] == "-":
+            pattern = args.pop()
+            flag = args.pop()
+
+        if not flag == "-name" and not flag == "":
+            raise InvalidFlagError
+        elif flag == "-name" and pattern == "":
+            raise PatternNotFoundError
+
         # find [PATH] -name PATTERN
-        if len(args) == 3:
-            if args[1] != "-name":
-                raise InvalidFlagError
-            else:
-                find_dir = args[0]
-                pattern = self.__get_regex(args[2])
-                for file in self.__find(find_dir, pattern):
-                    out_stream.append(file + "\n")
+        if len(args) == 1 and pattern != "":
+            find_dir = args[0]
+            pattern = self.__get_regex(pattern)
+            for file in self.__find(find_dir, pattern):
+                out_stream.append(file + "\n")
 
-        # find -name PATTERN or find . -name(with out pattern)
-        elif len(args) == 2:
-            if args[1] == "-name":
-                raise PatternNotFoundError
-            if args[0] != "-name":
-                raise InvalidFlagError
-            else:
-                pattern = self.__get_regex(args[1])
-                for file in self.__find(".", pattern):
-                    out_stream.append(file + "\n")
-
-        # find [PATH] or find -name(with out pattern)
-        elif len(args) == 1:
-            if args[0] == "-name":
-                raise PatternNotFoundError
+        # find [PATH]
+        elif len(args) == 1 and pattern == "":
             find_dir = args[0]
             for file in self.__find(find_dir):
+                out_stream.append(file + "\n")
+
+        # find -name PATTERN
+        elif len(args) == 0 and pattern != "":
+            pattern = self.__get_regex(pattern)
+            for file in self.__find(".", pattern):
                 out_stream.append(file + "\n")
 
         # No argument or more than three arguments
