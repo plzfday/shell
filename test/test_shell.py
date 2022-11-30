@@ -410,9 +410,9 @@ class TestHistory(unittest.TestCase):
         self.out_stream = deque()
 
         self.sample_in = ["ls", "cd comp0010", "ls"]
-        self.sample_out = ["1  ls",
-                           "2  cd comp0010",
-                           "3  ls"]
+        self.sample_out = ["1  ls\n",
+                           "2  cd comp0010\n",
+                           "3  ls\n"]
 
         self.app = History()
 
