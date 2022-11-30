@@ -69,7 +69,7 @@ class TestLs(unittest.TestCase):
         # results of "ls /comp0010/tools"
         self.sample_out = ["analysis\n", "coverage\n", "test\n"]
         # the number of results of "ls comp0010"
-        self.sample_out_number = 12
+        self.sample_out_number = 13
 
     def test_ls(self):
         self.app.exec([self.sample_path], self.in_stream, self.out_stream)
