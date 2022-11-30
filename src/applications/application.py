@@ -1,3 +1,8 @@
+""" Interface for applications
+
+Every application must inherit and implement the exec method.
+"""
+
 import abc
 
 

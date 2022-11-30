@@ -53,6 +53,7 @@ class Cut(Application):
         return intervals
 
     def __clean_up_intervals(self, intervals):
+        """ Merge overlapping intervals """
         intervals.sort()
 
         merged = []
