@@ -404,7 +404,7 @@ class TestUniq(unittest.TestCase):
 
 class TestHistory(unittest.TestCase):
     def setUp(self):
-        from src.apps import History
+        from applications.history import History
 
         self.app = History()
         self.in_stream = deque()
@@ -413,7 +413,8 @@ class TestHistory(unittest.TestCase):
         self.sample_in = ["ls", "cd comp0010", "ls"]
         self.sample_in = [x + "\n" for x in self.sample_in]
         self.sample_out = ["1  ls\n",
-                           "2  cd comp0010\n", "3  ls\n"]
+                           "2  cd comp0010\n",
+                           "3  ls\n"]
 
         with open("history.txt", "w") as f:
             for line in self.sample_in:

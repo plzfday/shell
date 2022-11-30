@@ -37,6 +37,7 @@ def input(prompt: str):
 
     app_list = tuple(APP.keys())
     s = ""
+    prev_s = ""
 
     print(prompt, end="", flush=True)
     while True:
@@ -48,20 +49,20 @@ def input(prompt: str):
         if c == "\r":
             print(flush=True)
             return s
-
-        if not (s and c in ["\x38", "\x40"]):
-            # backspace
-            if c == "\x7f":
-                s = s[:-1]
-                print("\b \b", end="", flush=True)
-            elif not s and c == "\x38":
-                print("Arrow Up")
-                s = history.arrow_up()
-            elif not s and c == "\x40":
-                print("Arrow Down")
-                s = history.arrow_down()
-            else:
-                s += c
+        # backspace
+        if c == "\x7f":
+            s = s[:-1]
+            print("\b \b", end="", flush=True)
+        elif c == "\x1b":
+            c = getkey()
+            if c == "\x5b":
+                c = getkey()
+                if c == "\x41":
+                    s = history.arrow_up()
+                elif c == "\x42":
+                    s = history.arrow_down()
+        elif c > "\x1f":
+            s += c
 
         cmdline = []
         sep = 0
@@ -89,4 +90,6 @@ def input(prompt: str):
                 sep += len(line) + 1
         # Clear the current line and print out the prompt
         # followed by thecurrent command line
+        print("\b \b" * (len(prev_s) + len(prompt)), end="", flush=True)
         print(f"\r{prompt}{''.join(cmdline)}", end="", flush=True)
+        prev_s = s
