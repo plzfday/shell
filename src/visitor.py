@@ -92,12 +92,13 @@ class ASTConstructor(Visitor_Recursive):
         self.tokens.append("".join(s))
 
     def back_quoted(self, t):
-        from shell import exec
+        from manager import ShellManager
 
         content = t.children[0]
         # parse the content again, execute it and return the result
         in_stream = deque()
         out_stream = deque()
-        exec(content, in_stream, out_stream)
+        manager = ShellManager(in_stream, out_stream)
+        manager.parse(content)
         res = [line.rstrip("\n") + " " for line in out_stream]
         self.substitutions.append("".join(res).rstrip("\n "))
