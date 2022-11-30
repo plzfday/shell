@@ -12,6 +12,8 @@ from applications.ls import Ls
 from applications.cd import Cd
 from applications.wc import Wc
 
+from exceptions import UnknownApplciation
+
 APP = {
     "pwd": Pwd,
     "cd": Cd,
@@ -31,6 +33,6 @@ APP = {
 
 def app_by_name(name):
     if name not in APP:
-        raise ValueError(f"Unknown application: {name}")
+        raise UnknownApplciation(name)
 
     return APP[name]()

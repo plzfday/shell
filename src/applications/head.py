@@ -1,23 +1,21 @@
 from applications.application import Application
+from exceptions import WrongNumberOfArguments, InvalidFlag
 
 
 class Head(Application):
     def exec(self, args, in_stream, out_stream):
         args_num = len(args)
         if args_num > 3:
-            raise ValueError("wrong number of command line arguments")
+            raise WrongNumberOfArguments
 
         num_lines = 10
 
         if args_num >= 2:
-            if args[0] == "-n":
-                try:
-                    num_lines = int(args[1])
-                except ValueError:
-                    raise ValueError("wrong flags")
+            if args[0] == "-n" and args[1].isdigit():
+                num_lines = int(args[1])
             else:
-                raise ValueError("wrong flags")
-
+                raise InvalidFlag
+                
             args_num -= 2
 
         if args_num == 0:

@@ -5,6 +5,7 @@ from glob import glob
 from lark import Token
 from lark.visitors import Visitor_Recursive
 from commands import Call, Pipe, Sequence
+from exceptions import NotSingleRedirection, InvalidPath
 
 
 class ASTConstructor(Visitor_Recursive):
@@ -43,19 +44,19 @@ class ASTConstructor(Visitor_Recursive):
 
     def r_dir(self, t):
         if self.output_redirection != "":
-            return ValueError("Mutiple output redirection is not allowed")
+            raise NotSingleRedirection
 
         path = self.tokens.pop()
         self.output_redirection = path
 
     def l_dir(self, t):
         if self.input_redirection:
-            return ValueError("Mutiple input redirection is not allowed")
+            raise NotSingleRedirection
 
         path = self.tokens.pop()
 
         if not os.path.isfile(path):
-            return ValueError("Wrong path or file does not exist input")
+            raise InvalidPath
 
         with open(path, "r") as f:
             self.in_stream.extend(f.readlines())

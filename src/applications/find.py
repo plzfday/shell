@@ -1,6 +1,8 @@
 import os
 import re
+
 from applications.application import Application
+from exceptions import WrongNumberOfArguments, PatternNotFound, InvalidFlag
 
 
 class Find(Application):
@@ -8,7 +10,7 @@ class Find(Application):
         # find [PATH] -name PATTERN
         if len(args) == 3:
             if args[1] != "-name":
-                raise ValueError("wrong flags")
+                raise InvalidFlag
             else:
                 find_dir = args[0]
                 pattern = self.__get_regex(args[2])
@@ -18,9 +20,9 @@ class Find(Application):
         # find -name PATTERN or find . -name(with out pattern)
         elif len(args) == 2:
             if args[1] == "-name":
-                raise ValueError("requires pattern")
+                raise PatternNotFound
             if args[0] != "-name":
-                raise ValueError("wrong flags")
+                raise InvalidFlag
             else:
                 pattern = self.__get_regex(args[1])
                 for file in self.__find(".", pattern):
@@ -29,14 +31,14 @@ class Find(Application):
         # find [PATH] or find -name(with out pattern)
         elif len(args) == 1:
             if args[0] == "-name":
-                raise ValueError("requires pattern")
+                raise PatternNotFound
             find_dir = args[0]
             for file in self.__find(find_dir):
                 out_stream.append(file + "\n")
 
         # No argument or more than three arguments
         else:
-            raise ValueError("wrong number of command line arguments")
+            raise WrongNumberOfArguments
 
     def __find(self, dir, pattern=""):
         if dir == "":

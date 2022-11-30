@@ -1,5 +1,6 @@
 import os
 from applications.application import Application
+from exceptions import InvalidPath, InvalidFlag
 
 
 class Wc(Application):
@@ -22,7 +23,7 @@ class Wc(Application):
                         characters = self.__get_character_count(contents)
                         total[2] += characters
                 else:
-                    raise ValueError("path does not exist")
+                    raise InvalidPath
         else:
             lines = self.__get_line_count(in_stream)
             total[0] += lines
@@ -41,7 +42,7 @@ class Wc(Application):
             out_stream.append("{: >4} {: >4} {: >4}".format(
                 str(total[0]), str(total[1]), str(total[2]))+'\n')
         else:
-            raise ValueError("wrong flags")
+            raise InvalidFlag
 
     def __get_line_count(self, contents):
         return len(contents)
