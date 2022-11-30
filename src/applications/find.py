@@ -7,6 +7,11 @@ from exceptions import WrongNumberOfArgumentsError, \
 
 
 class Find(Application):
+    """ Recursively searches for files with matching names
+
+    Flag: -name pattern - file name with some parts replaced with *
+    """
+
     def exec(self, args, in_stream, out_stream):
         # find [PATH] -name PATTERN
         if len(args) == 3:

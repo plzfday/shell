@@ -4,6 +4,16 @@ from exceptions import InvalidPathError, InvalidFlagError
 
 
 class Wc(Application):
+    """ Outputs the number of lines, words and characters in a file
+
+    It is possible to specify a flag to only output the number of 
+    lines, words or characters
+
+    Options: -l - number of lines
+             -w - number of words
+             -m - number of characters
+    """
+
     def exec(self, args, in_stream, out_stream):
         flag = ""
         if len(args) > 0 and args[0][0] == "-":

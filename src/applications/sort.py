@@ -3,6 +3,11 @@ from exceptions import WrongNumberOfArgumentsError
 
 
 class Sort(Application):
+    """ Sorts the contents of a file/stdin line by line
+
+    Options: -r - sort lines in reverse order
+    """
+
     def exec(self, args, in_stream, out_stream):
         if len(args) > 2:
             raise WrongNumberOfArgumentsError
