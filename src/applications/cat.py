@@ -8,7 +8,9 @@ class Cat(Application):
         if len(args) != 0:
             for arg in args:
                 with open(arg) as f:
-                    out_stream.extend(f.readlines())
+                    lines = f.readlines()
+                    for line in lines:
+                        out_stream.append(line.rstrip() + "\n")
         else:
             for line in in_stream:
                 out_stream.append(line)
