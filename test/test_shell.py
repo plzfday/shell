@@ -402,6 +402,55 @@ class TestUniq(unittest.TestCase):
                 str(error), "wrong number of command line arguments")
 
 
+class TestHistory(unittest.TestCase):
+    def setUp(self):
+        from applications.history import History
+
+        self.in_stream = deque()
+        self.out_stream = deque()
+
+        self.sample_in = ["ls", "cd comp0010", "ls"]
+        self.sample_out = ["1  ls\n",
+                           "2  cd comp0010\n",
+                           "3  ls\n"]
+
+        self.app = History()
+
+    def test_history_default(self):
+        for line in self.sample_in:
+            self.app.add(line)
+
+        self.app.exec([], self.in_stream, self.out_stream)
+        self.assertEqual(self.out_stream, deque(self.sample_out))
+
+    def test_history_too_many_args(self):
+        try:
+            self.app.exec(["-c", "test"], self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "wrong number of command line arguments")
+
+    def test_history_invalid_option(self):
+        try:
+            self.app.exec(["-d"], self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(str(error), "invalid option")
+
+    def test_history_add(self):
+        for i in range(101):
+            self.app.add(str(i))
+
+        self.assertEqual(self.app.saved[0], "1")
+        self.assertEqual(self.app.saved[-1], "100")
+
+    def test_history_valid_option(self):
+        self.app.exec(["-c"], self.in_stream, self.out_stream)
+        self.assertEqual(self.out_stream, deque([]))
+
+    def tearDown(self):
+        self.app.saved.clear()
+
+
 class TestSort(unittest.TestCase):
     def setUp(self):
         from applications.sort import Sort
@@ -657,15 +706,15 @@ class TestCall(unittest.TestCase):
 
     def test_call(self):
         from commands import Call
-        call = Call('echo', ['foo'])
+        call = Call("echo", ["foo"])
         call.eval(self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_out))
 
     def test_call_path(self):
         from commands import Call
-        Call('echo', ['foo'],
-             'call/file.txt').eval(self.in_stream, self.out_stream)
-        output = Call('cat', ['call/file.txt'])
+        Call("echo", ["foo"],
+             "call/file.txt").eval(self.in_stream, self.out_stream)
+        output = Call("cat", ["call/file.txt"])
         output.eval(self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_out))
 
@@ -685,8 +734,8 @@ class TestSequence(unittest.TestCase):
 
     def test_sequence(self):
         from commands import Call, Sequence
-        app1 = Call('echo', ['foo'])
-        app2 = Call('cat', ["test/test_sequence.txt"])
+        app1 = Call("echo", ["foo"])
+        app2 = Call("cat", ["test/test_sequence.txt"])
         seq = Sequence(app1, app2)
 
         seq.eval(self.in_stream, self.out_stream)
@@ -708,8 +757,8 @@ class TestPipe(unittest.TestCase):
 
     def test_pipe(self):
         from commands import Call, Pipe
-        app1 = Call('cat', ["test/test_pipe.txt"])
-        app2 = Call('grep', ["foo"])
+        app1 = Call("cat", ["test/test_pipe.txt"])
+        app2 = Call("grep", ["foo"])
         pipe = Pipe(app1, app2)
 
         pipe.eval(self.in_stream, self.out_stream)
@@ -726,13 +775,13 @@ class TestUnsafeDecorator(unittest.TestCase):
 
     def test_unsafe_decorato_with_no_error(self):
         from commands import Call
-        call = Call('_echo', ['foo'])
+        call = Call("_echo", ["foo"])
         call.eval(self.in_stream, self.out_stream)
-        self.assertEqual(self.out_stream, deque(['foo\n']))
+        self.assertEqual(self.out_stream, deque(["foo\n"]))
 
     def test_unsafe_decorator_with_too_many_args(self):
         from commands import Call
-        call = Call('_ls', ['foo', 'bar'])
+        call = Call("_ls", ["foo", "bar"])
         call.eval(self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_out))
 
@@ -758,7 +807,7 @@ class TestApplication(unittest.TestCase):
         try:
             app.exec([], self.in_stream, self.out_stream)
         except NotImplementedError as error:
-            self.assertEqual(str(error), '')
+            self.assertEqual(str(error), "")
 
 
 class TestCommand(unittest.TestCase):
@@ -775,7 +824,7 @@ class TestCommand(unittest.TestCase):
         try:
             command.eval(self.in_stream, self.out_stream)
         except NotImplementedError as error:
-            self.assertEqual(str(error), '')
+            self.assertEqual(str(error), "")
 
 class TestWc(unittest.TestCase):
     def setUp(self):
@@ -845,8 +894,3 @@ class TestWc(unittest.TestCase):
         except ValueError as error:
             self.assertEqual(
                 str(error), "path does not exist")
-
-
-
-# if __name__ == "__main__":
-#     unittest.main()
