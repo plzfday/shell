@@ -23,9 +23,8 @@ class History(Application):
         if len(args) > 1:
             raise ValueError("wrong number of command line arguments")
         elif len(args) == 0:
-            length = len(self.saved) - 1
-            for i in range(length):
-                out_stream.append(f"{i + 1} {self.saved[i]}")
+            for i, item in enumerate(self.saved):
+                out_stream.append(f"{i + 1}  {item}")
         elif len(args) == 1 and args[0] == "-c":
             self.saved.clear()
         else:

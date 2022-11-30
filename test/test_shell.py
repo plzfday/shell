@@ -406,7 +406,6 @@ class TestHistory(unittest.TestCase):
     def setUp(self):
         from applications.history import History
 
-        self.app = History()
         self.in_stream = deque()
         self.out_stream = deque()
 
@@ -416,9 +415,11 @@ class TestHistory(unittest.TestCase):
                            "2  cd comp0010\n",
                            "3  ls\n"]
 
-        with open("history.txt", "w") as f:
+        with open("/comp0010/history.txt", "w") as f:
             for line in self.sample_in:
                 f.write(line)
+
+        self.app = History()
 
     def test_history(self):
         self.app.exec([], self.in_stream, self.out_stream)
