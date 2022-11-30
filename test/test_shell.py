@@ -777,6 +777,76 @@ class TestCommand(unittest.TestCase):
         except NotImplementedError as error:
             self.assertEqual(str(error), '')
 
+class TestWc(unittest.TestCase):
+    def setUp(self):
+        from applications.wc import Wc
+
+        self.app = Wc()
+        self.in_stream = deque()
+        self.out_stream = deque()
+        self.sample_in1 = ["foo", "bar"]
+        self.sample_in1 = [x + "\n" for x in self.sample_in1]
+        self.sample_in2 = ["hello", "world"]
+        self.sample_in2 = [x + "\n" for x in self.sample_in2]
+        self.sample_out1 = ["2", "6", "8"]
+        self.sample_out2 = ["4", "14", "20"]
+        
+        filename = "wc/test_wc_1.txt"
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
+        with open(filename, "w") as f:
+            for line in self.sample_in1:
+                f.write(line)
+
+        with open("wc/test_wc_2.txt", "w") as f:
+            for line in self.sample_in2:
+                f.write(line)
+
+    def test_wc(self):
+        self.app.exec(["wc/test_wc_1.txt"], self.in_stream, self.out_stream)
+        result = self.out_stream[0].strip().split()
+        self.assertEqual(result, self.sample_out1)
+
+    def test_wc_stdin(self):
+        self.in_stream.extend(self.sample_in1)
+        self.app.exec([], self.in_stream, self.out_stream)
+        result = self.out_stream[0].strip().split()
+        self.assertEqual(result, self.sample_out1)
+
+    def test_wc_l(self):
+        self.app.exec(['-l', "wc/test_wc_1.txt"], self.in_stream, self.out_stream)
+        result = self.out_stream[0].strip()
+        self.assertEqual(result, "2")
+
+    def test_wc_w(self):
+        self.app.exec(['-w', "wc/test_wc_1.txt"], self.in_stream, self.out_stream)
+        result = self.out_stream[0].strip()
+        self.assertEqual(result, "6")
+
+    def test_wc_m(self):
+        self.app.exec(['-m', "wc/test_wc_1.txt"], self.in_stream, self.out_stream)
+        result = self.out_stream[0].strip()
+        self.assertEqual(result, "8")
+
+    def test_wc_files(self):
+        self.app.exec(["wc/test_wc_1.txt", "wc/test_wc_2.txt"], self.in_stream, self.out_stream)
+        result = self.out_stream[0].strip().split()
+        self.assertEqual(result, self.sample_out2)
+
+    def test_wc_incorrect_flag(self):
+        try:
+            self.app.exec(["-c", "wc/test_wc_1.txt"], self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "wrong flags")
+
+    def test_wc_wrong_path(self):
+        try:
+            self.app.exec(["test_wc_1.txt"], self.in_stream, self.out_stream)
+        except ValueError as error:
+            self.assertEqual(
+                str(error), "path does not exist")
+
+
 
 # if __name__ == "__main__":
 #     unittest.main()

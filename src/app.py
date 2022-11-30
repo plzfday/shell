@@ -10,6 +10,7 @@ from applications.echo import Echo
 from applications.cat import Cat
 from applications.ls import Ls
 from applications.cd import Cd
+from applications.wc import Wc
 
 APP = {
     "pwd": Pwd,
@@ -24,6 +25,7 @@ APP = {
     "find": Find,
     "uniq": Uniq,
     "sort": Sort,
+    "wc": Wc,
 }
 
 
