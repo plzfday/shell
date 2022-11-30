@@ -24,7 +24,7 @@ class TestPwd(unittest.TestCase):
     def test_pwd_too_many_arguments(self):
         try:
             self.app.exec(["foo"], self.in_stream, self.out_stream)
-        except WrongNumberOfArguments:
+        except WrongNumberOfArgumentsError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
@@ -48,14 +48,14 @@ class TestCd(unittest.TestCase):
     def test_cd_no_path(self):
         try:
             self.app.exec([], self.in_stream, self.out_stream)
-        except WrongNumberOfArguments:
+        except WrongNumberOfArgumentsError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
     def test_cd_too_many_args(self):
         try:
             self.app.exec(["foo", "bar"], self.in_stream, self.out_stream)
-        except WrongNumberOfArguments:
+        except WrongNumberOfArgumentsError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
@@ -89,14 +89,14 @@ class TestLs(unittest.TestCase):
     def test_ls_too_many_args(self):
         try:
             self.app.exec(["foo", "bar"], self.in_stream, self.out_stream)
-        except WrongNumberOfArguments:
+        except WrongNumberOfArgumentsError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
     def test_ls_wrong_path(self):
         try:
             self.app.exec(["foo"], self.in_stream, self.out_stream)
-        except InvalidPath:
+        except InvalidPathError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
@@ -204,14 +204,14 @@ class TestHead(unittest.TestCase):
     def test_head_incorrect_line_number(self):
         try:
             self.app.exec(["-n", "-"], self.in_stream, self.out_stream)
-        except InvalidFlag:
+        except InvalidFlagError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
     def test_head_incorrect_flag(self):
         try:
             self.app.exec(["-num", "4"], self.in_stream, self.out_stream)
-        except InvalidFlag:
+        except InvalidFlagError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
@@ -219,7 +219,7 @@ class TestHead(unittest.TestCase):
         try:
             self.app.exec(["-n", "11", "12", "test/test_head.txt"],
                           self.in_stream, self.out_stream)
-        except WrongNumberOfArguments:
+        except WrongNumberOfArgumentsError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
@@ -285,14 +285,14 @@ class TestTail(unittest.TestCase):
     def test_tail_incorrect_line_number(self):
         try:
             self.app.exec(["-n", "-"], self.in_stream, self.out_stream)
-        except InvalidFlag:
+        except InvalidFlagError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
     def test_tail_incorrect_flag(self):
         try:
             self.app.exec(["-num", "4"], self.in_stream, self.out_stream)
-        except InvalidFlag:
+        except InvalidFlagError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
@@ -300,7 +300,7 @@ class TestTail(unittest.TestCase):
         try:
             self.app.exec(["-n", "2", "4", "test/test_head.txt"],
                           self.in_stream, self.out_stream)
-        except WrongNumberOfArguments:
+        except WrongNumberOfArgumentsError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
@@ -357,7 +357,7 @@ class TestGrep(unittest.TestCase):
     def test_grep_no_args(self):
         try:
             self.app.exec([], self.in_stream, self.out_stream)
-        except WrongNumberOfArguments:
+        except WrongNumberOfArgumentsError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
@@ -411,7 +411,7 @@ class TestUniq(unittest.TestCase):
         try:
             self.app.exec(["-i", "test", "test/test_uniq.txt"],
                           self.in_stream, self.out_stream)
-        except WrongNumberOfArguments:
+        except WrongNumberOfArgumentsError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
@@ -453,7 +453,7 @@ class TestSort(unittest.TestCase):
         try:
             self.app.exec(["-r", "test", "./test_sort.txt"],
                           self.in_stream, self.out_stream)
-        except WrongNumberOfArguments:
+        except WrongNumberOfArgumentsError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
@@ -513,21 +513,21 @@ class TestFind(unittest.TestCase):
     def test_find_no_args(self):
         try:
             self.app.exec([], self.in_stream, self.out_stream)
-        except WrongNumberOfArguments:
+        except WrongNumberOfArgumentsError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
     def test_find_one_arg_no_pattern(self):
         try:
             self.app.exec(["-name"], self.in_stream, self.out_stream)
-        except PatternNotFound:
+        except PatternNotFoundError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
     def test_find_two_args_no_pattern(self):
         try:
             self.app.exec(["find", "-name"], self.in_stream, self.out_stream)
-        except PatternNotFound:
+        except PatternNotFoundError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
@@ -535,7 +535,7 @@ class TestFind(unittest.TestCase):
         try:
             self.app.exec(["-n", "test_find.txt"],
                           self.in_stream, self.out_stream)
-        except InvalidFlag:
+        except InvalidFlagError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
@@ -543,7 +543,7 @@ class TestFind(unittest.TestCase):
         try:
             self.app.exec(["find", "-n", "test_find.txt"],
                           self.in_stream, self.out_stream)
-        except InvalidFlag:
+        except InvalidFlagError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
@@ -628,14 +628,14 @@ class TestCut(unittest.TestCase):
         try:
             self.app.exec(["-r", "1-3", "./test_cut.txt"],
                           self.in_stream, self.out_stream)
-        except InvalidFlag:
+        except InvalidFlagError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
     def test_cut_few_args(self):
         try:
             self.app.exec([], self.in_stream, self.out_stream)
-        except WrongNumberOfArguments:
+        except WrongNumberOfArgumentsError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
@@ -643,7 +643,7 @@ class TestCut(unittest.TestCase):
         try:
             self.app.exec(["-b", "1-3", "4-5", "./test_cut.txt"],
                           self.in_stream, self.out_stream)
-        except WrongNumberOfArguments:
+        except WrongNumberOfArgumentsError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
@@ -651,7 +651,7 @@ class TestCut(unittest.TestCase):
         try:
             self.app.exec(["-b", "-", "./test_cut.txt"],
                           self.in_stream, self.out_stream)
-        except InvalidRange:
+        except InvalidRangeError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
@@ -659,7 +659,7 @@ class TestCut(unittest.TestCase):
         try:
             self.app.exec(["-b", "1-2-3", "./test_cut.txt"],
                           self.in_stream, self.out_stream)
-        except InvalidInput:
+        except InvalidInputError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
@@ -769,7 +769,7 @@ class TestApplication(unittest.TestCase):
         from app import app_by_name
         try:
             app_by_name("foo")
-        except UnknownApplciation:
+        except UnknownApplciationError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
@@ -838,7 +838,7 @@ class TestRedirection(unittest.TestCase):
         cmdline = "cat < redirection/test_redirection.txt"
         try:
             self.manager.parse(cmdline)
-        except InvalidPath:
+        except InvalidPathError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
@@ -856,7 +856,7 @@ class TestRedirection(unittest.TestCase):
         cmdline = "cat < redirection/test_redirection_1.txt < redirection/test_redirection_2.txt"
         try:
             self.manager.parse(cmdline)
-        except NotSingleRedirection:
+        except NotSingleRedirectionError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
@@ -864,7 +864,7 @@ class TestRedirection(unittest.TestCase):
         cmdline = "echo foo > redirection/test_redirection_1.txt > redirection/test_redirection_2.txt"
         try:
             self.manager.parse(cmdline)
-        except NotSingleRedirection:
+        except NotSingleRedirectionError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
@@ -987,14 +987,14 @@ class TestWc(unittest.TestCase):
         try:
             self.app.exec(["-c", "wc/test_wc_1.txt"],
                           self.in_stream, self.out_stream)
-        except InvalidFlag:
+        except InvalidFlagError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 
     def test_wc_wrong_path(self):
         try:
             self.app.exec(["test_wc_1.txt"], self.in_stream, self.out_stream)
-        except InvalidPath:
+        except InvalidPathError:
             self.error_occurred = True
         self.assertEqual(self.error_occurred, True)
 

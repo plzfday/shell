@@ -1,5 +1,5 @@
 from applications.application import Application
-from exceptions import WrongNumberOfArguments, InvalidFlag, InvalidRange, InvalidInput
+from exceptions import WrongNumberOfArgumentsError, InvalidFlagError, InvalidRangeError, InvalidInputError
 
 
 class Cut(Application):
@@ -7,7 +7,7 @@ class Cut(Application):
         # cut -b 1 requirements.txt
         # args: ['-b', '1-,3-5', 'requirements.txt']
         if len(args) < 2 or len(args) > 3:
-            raise WrongNumberOfArguments
+            raise WrongNumberOfArgumentsError
 
         if args[0] == "-b":
             intervals = self.__merge_intervals(args[1])
@@ -19,7 +19,7 @@ class Cut(Application):
                     for line in f:
                         self.__print_line(line.rstrip(), intervals, out_stream)
         else:
-            raise InvalidFlag
+            raise InvalidFlagError
 
     def __merge_intervals(self, arg):
         return self.__clean_up_intervals(self.__parse_intervals(arg))
@@ -33,7 +33,7 @@ class Cut(Application):
                 intervals.append([int(tmp[0]), int(tmp[0])])
             elif len(tmp) == 2:
                 if tmp == ["", ""]:
-                    raise InvalidRange
+                    raise InvalidRangeError
                 elif tmp[0] == "":
                     # Case: -num2
                     intervals.append((1, int(tmp[1])))
@@ -47,7 +47,7 @@ class Cut(Application):
                     if n0 <= n1:
                         intervals.append((n0, n1))
             else:
-                raise InvalidInput
+                raise InvalidInputError
 
         return intervals
 

@@ -1,11 +1,12 @@
 from applications.application import Application
-from exceptions import WrongNumberOfArguments, InvalidFlag
+from exceptions import WrongNumberOfArgumentsError, InvalidFlagError
+
 
 class Tail(Application):
     def exec(self, args, in_stream, out_stream):
         args_num = len(args)
         if args_num > 3:
-            raise WrongNumberOfArguments
+            raise WrongNumberOfArgumentsError
 
         num_lines = 10
 
@@ -13,8 +14,8 @@ class Tail(Application):
             if args[0] == "-n" and args[1].isdigit():
                 num_lines = int(args[1])
             else:
-                raise InvalidFlag
-                
+                raise InvalidFlagError
+
             args_num -= 2
 
         if args_num == 0:

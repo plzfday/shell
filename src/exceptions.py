@@ -1,34 +1,38 @@
-class InvalidFlag(Exception):
+class InvalidFlagError(Exception):
     def __init__(self):
         super().__init__("invalid flags")
 
-class WrongNumberOfArguments(Exception):
+
+class WrongNumberOfArgumentsError(Exception):
     def __init__(self):
         super().__init__("wrong number of command line arguments")
 
-class InvalidPath(Exception):
+
+class InvalidPathError(Exception):
     def __init__(self):
         super().__init__("wrong path or file does not exist")
 
-class InvalidRange(Exception):
+
+class InvalidRangeError(Exception):
     def __init__(self):
         super().__init__("invalid range")
 
-class InvalidInput(Exception):
+
+class InvalidInputError(Exception):
     def __init__(self):
         super().__init__("invalid input")
 
-class PatternNotFound(Exception):
+
+class PatternNotFoundError(Exception):
     def __init__(self):
         super().__init__("pattern cannot be found")
 
-class UnknownApplciation(Exception):
+
+class UnknownApplciationError(Exception):
     def __init__(self, name):
         super().__init__(f"Unknown application: {name}")
 
-class NotSingleRedirection(Exception):
+
+class NotSingleRedirectionError(Exception):
     def __init__(self):
         super().__init__("mutiple redirection is not allowed")
-
-
-# ValueError(f"unexpected command line argument {sys.argv[1]}")

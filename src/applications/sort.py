@@ -1,11 +1,11 @@
 from applications.application import Application
-from exceptions import WrongNumberOfArguments
+from exceptions import WrongNumberOfArgumentsError
 
 
 class Sort(Application):
     def exec(self, args, in_stream, out_stream):
         if len(args) > 2:
-            raise WrongNumberOfArguments
+            raise WrongNumberOfArgumentsError
 
         contents = []
         is_reverse = False

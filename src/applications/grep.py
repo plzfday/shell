@@ -1,7 +1,7 @@
 import re
 
 from applications.application import Application
-from exceptions import WrongNumberOfArguments
+from exceptions import WrongNumberOfArgumentsError
 
 
 class Grep(Application):
@@ -27,4 +27,4 @@ class Grep(Application):
                             else:
                                 out_stream.append(line + "\n")
         else:
-            raise WrongNumberOfArguments
+            raise WrongNumberOfArgumentsError

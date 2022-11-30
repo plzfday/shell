@@ -1,7 +1,7 @@
 import os
 
 from applications.application import Application
-from exceptions import WrongNumberOfArguments, InvalidPath
+from exceptions import WrongNumberOfArgumentsError, InvalidPathError
 
 
 class Ls(Application):
@@ -9,7 +9,7 @@ class Ls(Application):
         if len(args) == 0:
             ls_dir = os.getcwd()
         elif len(args) > 1:
-            raise WrongNumberOfArguments
+            raise WrongNumberOfArgumentsError
         else:
             ls_dir = args[0]
 
@@ -18,4 +18,4 @@ class Ls(Application):
                 if not f.startswith("."):
                     out_stream.append(f + "\n")
         else:
-            raise InvalidPath
+            raise InvalidPathError
