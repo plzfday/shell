@@ -2,7 +2,8 @@ import os
 import re
 
 from applications.application import Application
-from exceptions import WrongNumberOfArgumentsError, PatternNotFoundError, InvalidFlagError
+from exceptions import WrongNumberOfArgumentsError, \
+    PatternNotFoundError, InvalidFlagError
 
 
 class Find(Application):

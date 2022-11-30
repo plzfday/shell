@@ -3,7 +3,9 @@ import unittest
 
 from unittest.mock import patch
 from collections import deque
-from exceptions import *
+from exceptions import InvalidFlagError, WrongNumberOfArgumentsError, \
+    InvalidPathError, InvalidRangeError, InvalidInputError, \
+    PatternNotFoundError, UnknownApplciationError, NotSingleRedirectionError
 
 
 class TestPwd(unittest.TestCase):
@@ -853,7 +855,8 @@ class TestRedirection(unittest.TestCase):
         self.assertEqual(out_stream, deque(self.sample_out))
 
     def test_redirections_multiple_input(self):
-        cmdline = "cat < redirection/test_redirection_1.txt < redirection/test_redirection_2.txt"
+        cmdline = "cat < redirection/test_redirection_1.txt \
+            < redirection/test_redirection_2.txt"
         try:
             self.manager.parse(cmdline)
         except NotSingleRedirectionError:
@@ -861,7 +864,8 @@ class TestRedirection(unittest.TestCase):
         self.assertEqual(self.error_occurred, True)
 
     def test_redirections_multiple_output(self):
-        cmdline = "echo foo > redirection/test_redirection_1.txt > redirection/test_redirection_2.txt"
+        cmdline = "echo foo > redirection/test_redirection_1.txt \
+            > redirection/test_redirection_2.txt"
         try:
             self.manager.parse(cmdline)
         except NotSingleRedirectionError:

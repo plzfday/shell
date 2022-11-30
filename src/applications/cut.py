@@ -1,5 +1,6 @@
 from applications.application import Application
-from exceptions import WrongNumberOfArgumentsError, InvalidFlagError, InvalidRangeError, InvalidInputError
+from exceptions import WrongNumberOfArgumentsError, \
+    InvalidFlagError, InvalidRangeError, InvalidInputError
 
 
 class Cut(Application):

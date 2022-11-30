@@ -9,7 +9,7 @@ class Wc(Application):
         if len(args) > 0 and args[0][0] == "-":
             flag = args.pop(0)
 
-        #[num_of_lines, num_of_words, num_of_characters]
+        # [num_of_lines, num_of_words, num_of_characters]
         total = [0, 0, 0]
         if not len(args) == 0:
             for arg in args:
