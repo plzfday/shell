@@ -1,10 +1,11 @@
 from applications.application import Application
+from exceptions import WrongNumberOfArgumentsError
 
 
 class Uniq(Application):
     def exec(self, args, in_stream, out_stream):
         if len(args) > 2:
-            raise ValueError("wrong number of command line arguments")
+            raise WrongNumberOfArgumentsError
 
         case_sensitive = True
         if "-i" in args and len(args) > 0:

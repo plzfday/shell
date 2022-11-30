@@ -1,5 +1,6 @@
 import os
 from applications.application import Application
+from exceptions import InvalidPathError, InvalidFlagError
 
 
 class Wc(Application):
@@ -8,7 +9,7 @@ class Wc(Application):
         if len(args) > 0 and args[0][0] == "-":
             flag = args.pop(0)
 
-        #[num_of_lines, num_of_words, num_of_characters]
+        # [num_of_lines, num_of_words, num_of_characters]
         total = [0, 0, 0]
         if not len(args) == 0:
             for arg in args:
@@ -22,7 +23,7 @@ class Wc(Application):
                         characters = self.__get_character_count(contents)
                         total[2] += characters
                 else:
-                    raise ValueError("path does not exist")
+                    raise InvalidPathError
         else:
             lines = self.__get_line_count(in_stream)
             total[0] += lines
@@ -41,7 +42,7 @@ class Wc(Application):
             out_stream.append("{: >4} {: >4} {: >4}".format(
                 str(total[0]), str(total[1]), str(total[2]))+'\n')
         else:
-            raise ValueError("wrong flags")
+            raise InvalidFlagError
 
     def __get_line_count(self, contents):
         return len(contents)

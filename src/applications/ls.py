@@ -1,6 +1,7 @@
 import os
 
 from applications.application import Application
+from exceptions import WrongNumberOfArgumentsError, InvalidPathError
 
 
 class Ls(Application):
@@ -8,7 +9,7 @@ class Ls(Application):
         if len(args) == 0:
             ls_dir = os.getcwd()
         elif len(args) > 1:
-            raise ValueError("wrong number of command line arguments")
+            raise WrongNumberOfArgumentsError
         else:
             ls_dir = args[0]
 
@@ -17,4 +18,4 @@ class Ls(Application):
                 if not f.startswith("."):
                     out_stream.append(f + "\n")
         else:
-            raise ValueError("path does not exist")
+            raise InvalidPathError

@@ -1,10 +1,11 @@
 from applications.application import Application
+from exceptions import WrongNumberOfArgumentsError
 
 
 class Sort(Application):
     def exec(self, args, in_stream, out_stream):
         if len(args) > 2:
-            raise ValueError("sort: wrong number of arguments")
+            raise WrongNumberOfArgumentsError
 
         contents = []
         is_reverse = False
