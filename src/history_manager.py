@@ -9,16 +9,17 @@ class HistoryManager:
 
     def __init__(self):
         self.history: History = History()
-        self.current: int = len(self.history.saved)
+        self.len_history: int = len(self.history.saved)
+        self.current: int = self.len_history
 
     def arrow_up(self) -> str:
-        if self.current - 1 < 0:
+        if self.len_history == 0:
             return ""
-        self.current -= 1
+        self.current = max(0, self.current - 1)
         return self.history.saved[self.current]
 
     def arrow_down(self) -> str:
-        if self.current + 1 > len(self.history.saved) - 1:
+        if self.len_history == 0 or self.current + 1 == self.len_history:
             return ""
-        self.current += 1
+        self.current = min(self.len_history - 1, self.current + 1)
         return self.history.saved[self.current]

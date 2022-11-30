@@ -31,6 +31,8 @@ if __name__ == "__main__":
             cmdline = advinput.input(os.getcwd() + "> ")
             if cmdline is None:
                 break
+            elif not cmdline:
+                continue
             history.add(cmdline)
             in_stream = deque()
             out_stream = deque()
