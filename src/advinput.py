@@ -1,6 +1,8 @@
 import re
 import sys
+
 from app import APP
+from history_manager import HistoryManager
 
 
 def getkey_windows():
@@ -23,7 +25,7 @@ def getkey_unix():
 
 def getkey_factory():
     import platform
-    if platform.system() == 'Windows':
+    if platform.system() == "Windows":
         return getkey_windows
     else:
         return getkey_unix
@@ -31,9 +33,11 @@ def getkey_factory():
 
 def input(prompt: str):
     getkey = getkey_factory()
+    history = HistoryManager()
 
     app_list = tuple(APP.keys())
     s = ""
+    prev_s = ""
 
     print(prompt, end="", flush=True)
     while True:
@@ -45,12 +49,19 @@ def input(prompt: str):
         if c == "\r":
             print(flush=True)
             return s
-
         # backspace
         if c == "\x7f":
             s = s[:-1]
             print("\b \b", end="", flush=True)
-        else:
+        elif c == "\x1b":
+            c = getkey()
+            if c == "\x5b":
+                c = getkey()
+                if c == "\x41":
+                    s = history.arrow_up()
+                elif c == "\x42":
+                    s = history.arrow_down()
+        elif c > "\x1f":
             s += c
 
         cmdline = []
@@ -79,4 +90,6 @@ def input(prompt: str):
                 sep += len(line) + 1
         # Clear the current line and print out the prompt
         # followed by thecurrent command line
+        print("\b \b" * (len(prev_s) + len(prompt)), end="", flush=True)
         print(f"\r{prompt}{''.join(cmdline)}", end="", flush=True)
+        prev_s = s

@@ -5,6 +5,7 @@ import advinput
 from collections import deque
 from manager import ShellManager
 from exceptions import WrongNumberOfArgumentsError
+from applications.history import History
 
 
 def exec(cmdline, in_stream, out_stream):
@@ -25,10 +26,12 @@ if __name__ == "__main__":
         while len(out_stream) > 0:
             print(out_stream.popleft(), end="")
     else:
+        history = History()
         while True:
             cmdline = advinput.input(os.getcwd() + "> ")
             if cmdline is None:
                 break
+            history.add(cmdline)
             in_stream = deque()
             out_stream = deque()
             exec(cmdline, in_stream, out_stream)

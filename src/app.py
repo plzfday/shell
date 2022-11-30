@@ -10,6 +10,7 @@ from applications.echo import Echo
 from applications.cat import Cat
 from applications.ls import Ls
 from applications.cd import Cd
+from applications.history import History
 from applications.wc import Wc
 
 from exceptions import UnknownApplciationError
@@ -27,6 +28,7 @@ APP = {
     "find": Find,
     "uniq": Uniq,
     "sort": Sort,
+    "history": History,
     "wc": Wc,
 }
 

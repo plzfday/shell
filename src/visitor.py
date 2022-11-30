@@ -77,7 +77,7 @@ class ASTConstructor(Visitor_Recursive):
             elif child.data == "back_quoted":
                 s.append(self.substitutions.popleft())
         if len(s) != 0:
-            self.tokens.extend("".join(s).split(' '))
+            self.tokens.extend("".join(s).split(" "))
 
     def single_quoted(self, t):
         self.tokens.append(t.children[0])
