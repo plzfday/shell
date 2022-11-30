@@ -6,7 +6,7 @@ from exceptions import InvalidPathError, InvalidFlagError
 class Wc(Application):
     """ Outputs the number of lines, words and characters in a file
 
-    It is possible to specify a flag to only output the number of 
+    It is possible to specify a flag to only output the number of
     lines, words or characters
 
     Options: -l - number of lines

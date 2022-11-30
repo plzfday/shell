@@ -4,7 +4,7 @@ from exceptions import InvalidFlagError, WrongNumberOfArgumentsError
 
 
 class History(Application):
-    """ Prints the preceding commands 
+    """ Prints the preceding commands
 
     Options: -c - clear the history
     """

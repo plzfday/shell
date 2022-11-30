@@ -4,7 +4,7 @@ from applications.history import History
 class HistoryManager:
     """ Used in user input prompt to retrieve history
 
-    This is a singleton class but initialised every time 
+    This is a singleton class but initialised every time
     it is called to update the history.
 
     It has dependency to Histrory class (app), but it is better to

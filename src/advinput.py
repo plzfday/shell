@@ -24,7 +24,7 @@ def getkey_unix():
 
 
 def getkey_factory():
-    """ Windows and Unix systems have different ways to get keyboard input 
+    """ Windows and Unix systems have different ways to get keyboard input
 
     Thus, we need a factory method to return the correct function for OS.
     """
@@ -39,7 +39,7 @@ def input(prompt: str):
     """ Catches the keyboard input and prints the line
 
     This function adapts MVC pattern. Because the string printed out for user
-    is coloured which means it includes substrings like \[033, the actual
+    is coloured which means it includes substrings like '[033', the actual
     string and the viewed string are treated differently.
     """
     getkey = getkey_factory()
