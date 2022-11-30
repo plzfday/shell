@@ -36,4 +36,3 @@ if __name__ == "__main__":
             exec(cmdline, in_stream, out_stream)
             while len(out_stream) > 0:
                 print(out_stream.popleft(), end="")
-        history.save()

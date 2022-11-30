@@ -69,7 +69,7 @@ class TestLs(unittest.TestCase):
         # results of "ls /comp0010/tools"
         self.sample_out = ["analysis\n", "coverage\n", "test\n"]
         # the number of results of "ls comp0010"
-        self.sample_out_number = 13
+        self.sample_out_number = 12
 
     def test_ls(self):
         self.app.exec([self.sample_path], self.in_stream, self.out_stream)
@@ -410,49 +410,45 @@ class TestHistory(unittest.TestCase):
         self.out_stream = deque()
 
         self.sample_in = ["ls", "cd comp0010", "ls"]
-        self.sample_in = [x + "\n" for x in self.sample_in]
-        self.sample_out = ["1  ls\n",
-                           "2  cd comp0010\n",
-                           "3  ls\n"]
-
-        with open("/comp0010/history.txt", "w") as f:
-            for line in self.sample_in:
-                f.write(line)
+        self.sample_out = ["1  ls",
+                           "2  cd comp0010",
+                           "3  ls"]
 
         self.app = History()
 
-    def test_history_1_default(self):
+    def test_history_default(self):
+        for line in self.sample_in:
+            self.app.add(line)
+
         self.app.exec([], self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque(self.sample_out))
 
-    def test_history_2_too_many_args(self):
+    def test_history_too_many_args(self):
         try:
             self.app.exec(["-c", "test"], self.in_stream, self.out_stream)
         except ValueError as error:
             self.assertEqual(
                 str(error), "wrong number of command line arguments")
 
-    def test_history_3_invalid_option(self):
+    def test_history_invalid_option(self):
         try:
             self.app.exec(["-d"], self.in_stream, self.out_stream)
         except ValueError as error:
             self.assertEqual(str(error), "invalid option")
 
-    def test_history_4_add(self):
+    def test_history_add(self):
         for i in range(101):
             self.app.add(str(i))
 
         self.assertEqual(self.app.saved[0], "1")
         self.assertEqual(self.app.saved[-1], "100")
 
-    def test_history_5_save(self):
-        self.app.save()
-        with open("/comp0010/history.txt", "r") as f:
-            self.assertEqual(f.readlines(), [f"{i}\n" for i in range(1, 101)])
-
-    def test_history_6_valid_option(self):
+    def test_history_valid_option(self):
         self.app.exec(["-c"], self.in_stream, self.out_stream)
         self.assertEqual(self.out_stream, deque([]))
+
+    def tearDown(self):
+        self.app.saved.clear()
 
 
 class TestSort(unittest.TestCase):
