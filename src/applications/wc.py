@@ -4,13 +4,13 @@ from applications.application import Application
 
 class Wc(Application):
     def exec(self, args, in_stream, out_stream):
-        flag = ''
+        flag = ""
         if len(args) > 0 and args[0][0] == "-":
             flag = args.pop(0)
 
         #[num_of_lines, num_of_words, num_of_characters]
         total = [0, 0, 0]
-        if len(args) != 0:
+        if not len(args) == 0:
             for arg in args:
                 if os.path.exists(arg):
                     with open(arg) as f:
@@ -37,7 +37,7 @@ class Wc(Application):
             out_stream.append("{: >4}".format(str(total[1])+'\n'))
         elif flag == "-m":
             out_stream.append("{: >4}".format(str(total[2])+'\n'))
-        elif flag == '':
+        elif flag == "":
             out_stream.append("{: >4} {: >4} {: >4}".format(
                 str(total[0]), str(total[1]), str(total[2]))+'\n')
         else:
